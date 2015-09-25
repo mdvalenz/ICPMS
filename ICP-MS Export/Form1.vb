@@ -10,15 +10,15 @@ Public Class Form1
 
     Private Sub importButton_Click(sender As Object, e As EventArgs) Handles exportButton.Click
 
-        If fileLocationTextBox.Text = "" Then
-            MsgBox("A run file was not chosen, please choose one and try again.", vbMsgBoxSetForeground)
-            GoTo endit
-        End If
+        'If fileLocationTextBox.Text = "" Then
+        '    MsgBox("A run file was not chosen, please choose one and try again.", vbMsgBoxSetForeground)
+        '    GoTo endit
+        'End If
 
-        If analystTextBox.Text = "" Then
-            MsgBox("Analyst initials are missing, please enter them and try again.", vbMsgBoxSetForeground)
-            GoTo endit
-        End If
+        'If analystTextBox.Text = "" Then
+        '    MsgBox("Analyst initials are missing, please enter them and try again.", vbMsgBoxSetForeground)
+        '    GoTo endit
+        'End If
 
         'Declare Variables
         Dim ExcelApp As Excel.Application
@@ -593,7 +593,7 @@ Public Class Form1
 
                                     'change format of rlt and rmdl columns to text
                                     ExcelApp.Columns(4).EntireColumn.NumberFormat = "@"
-                                    'ExcelApp.Columns(5).EntireColumn.NumberFormat = "@" ************************
+                                    'ExcelApp.Columns(5).EntireColumn.NumberFormat = "@"
 
                                 End If
 
