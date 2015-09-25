@@ -10,15 +10,15 @@ Public Class Form1
 
     Private Sub importButton_Click(sender As Object, e As EventArgs) Handles exportButton.Click
 
-        'If fileLocationTextBox.Text = "" Then
-        '    MsgBox("A run file was not chosen, please choose one and try again.", vbMsgBoxSetForeground)
-        '    GoTo endit
-        'End If
+        If fileLocationTextBox.Text = "" Then
+            MsgBox("A run file was not chosen, please choose one and try again.", vbMsgBoxSetForeground)
+            GoTo endit
+        End If
 
-        'If analystTextBox.Text = "" Then
-        '    MsgBox("Analyst initials are missing, please enter them and try again.", vbMsgBoxSetForeground)
-        '    GoTo endit
-        'End If
+        If analystTextBox.Text = "" Then
+            MsgBox("Analyst initials are missing, please enter them and try again.", vbMsgBoxSetForeground)
+            GoTo endit
+        End If
 
         'Declare Variables
         Dim ExcelApp As Excel.Application
@@ -38,8 +38,8 @@ Public Class Form1
         Dim sampleID4 As String = Nothing
         Dim sampleID5 As String = Nothing
 
-        Dim analysisCode As String
-        Dim endDate As String
+        Dim analysisCode As String = Nothing
+        Dim endDate As String = Nothing
         Dim ExcelWorkbook As Object
         Dim metalAnalyst As String = Nothing
 
@@ -58,11 +58,6 @@ Public Class Form1
         Dim metalMass As String = Nothing
         Dim metalResult As String = Nothing
         Dim metalAnalyte As String = Nothing
-        My.Settings.ppbCheck = True
-        My.Settings.ppmCheck = False
-        My.Settings.setSigFigs = "2"
-        My.Settings.reviewExport = True
-        My.Settings.leadConsumer = False
 
         'Delete the temporary Worksheets, if they exist
         For Each ExcelWorkSheet In ExcelApp.Worksheets
@@ -78,17 +73,13 @@ Public Class Form1
         newWorksheet = CType(ExcelApp.Worksheets.Add(), Excel.Worksheet)
         newWorksheet.Name = "temp"
 
-        ''Create temp worksheet
-        'Dim newWorksheet2 As Excel.Worksheet
-        'newWorksheet2 = CType(ExcelApp.Worksheets.Add(), Excel.Worksheet)
-        'newWorksheet2.Name = "temp2"
-
         ExcelApp.Sheets(My.Settings.fileName).Activate()
 
-        Dim count As String = 0
         Dim IDCheck As String = Nothing
         Dim letterCheck As String = Nothing
         Dim leadCount As Integer = 0
+        Dim sampleArrayCount As Integer = 0
+        Dim callSampleSettingsForm As New Form4
 
         For rowNumber = 1 To lastRow + 1
             If rowNumber <> 1 Then rowNumber = rowNumber - 2
@@ -97,29 +88,6 @@ Public Class Form1
                 sampleID = Microsoft.VisualBasic.Left(ExcelApp.Cells(rowNumber, 1).value, 7)
                 sampleID = UCase(sampleID)
 
-                If sampleID = My.Settings.sampleID Then
-                    IDCheck = Microsoft.VisualBasic.Right(sampleID, 1)
-                    letterCheck = Microsoft.VisualBasic.Left(sampleID, 1)
-                    If IsNumeric(letterCheck) = False Then
-                        If IsNumeric(IDCheck) = True Then
-                            MsgBox(sampleID & " is a duplicate sample." & vbCrLf & "Please enter your results into LabWorks manually.", vbMsgBoxSetForeground)
-                        End If
-                    End If
-
-                    GoTo duplicateContinue
-                End If
-
-                IDCheck = Microsoft.VisualBasic.Right(sampleID, 1)
-                letterCheck = Microsoft.VisualBasic.Left(sampleID, 1)
-
-                If IsNumeric(letterCheck) = False Then
-                    If IsNumeric(IDCheck) = True Then
-                        'Call Sample Options form to determine MDLs and Units
-                        My.Settings.sampleID = sampleID
-                    End If
-                End If
-
-                Dim callSampleSettingsForm As New Form4
                 Dim mdlType As String = Nothing
                 Dim metalUnits As String = Nothing
 
@@ -135,83 +103,25 @@ Public Class Form1
                         Me.Focus()
                         Me.TopMost = False
 
-                        callSampleSettingsForm.ShowDialog(Me)
-
-                        If My.Settings.exportNow = True Then
-                            GoTo exportNow
-                        End If
-
-                        If My.Settings.exitProgram = True Then
-                            MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
-                            'Close Run File
-                            ExcelApp.Sheets(My.Settings.fileName).Activate()
-                            ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
-
-                            'Release Excel Objects and close Excel
-                            ExcelApp.Visible = True
-                            If Not ExcelWorkSheet Is Nothing Then
-                                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkSheet)
-                                ExcelWorkSheet = Nothing
-                            End If
-
-                            If Not ExcelWorkbook Is Nothing Then
-                                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkbook)
-                                ExcelWorkbook = Nothing
-                            End If
-
-                            If Not ExcelWorkBooks Is Nothing Then
-                                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkBooks)
-                                ExcelWorkBooks = Nothing
-                            End If
-
-                            ExcelApp.Quit()
-                            If Not ExcelApp Is Nothing Then
-                                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelApp)
-                                ExcelApp = Nothing
-                            End If
-                            GoTo endit
-                        End If
-
-                        If My.Settings.skipSample = True Then
-                            GoTo duplicateContinue
-                        End If
-
-                        'Me.BringToFront()
-                        ExcelApp.Sheets(My.Settings.fileName).Activate()
+                        'Set settings
+                        My.Settings.ppbCheck = True
+                        My.Settings.ppmCheck = False
+                        My.Settings.setSigFigs = "2"
+                        My.Settings.reviewExport = True
+                        My.Settings.leadConsumer = False
+                        My.Settings.wetCheck = True
+                        My.Settings.dryCheck = False
+                        My.Settings.microwaveCheck = True
+                        My.Settings.diluteCheck = False
+                        My.Settings.juiceCheck = False
 
                         'MDLs
-                        If callSampleSettingsForm.wetRadioButton.Checked = True Then
-                            If callSampleSettingsForm.diluteRadioButton.Checked = True Then
-                                If callSampleSettingsForm.juiceCheckBox.Checked = True Then
-                                    mdlType = "wj"
-                                Else
-                                    mdlType = "wd"
-                                End If
-                            Else
-                                If callSampleSettingsForm.juiceCheckBox.Checked = True Then
-                                    mdlType = "wj"
-                                Else
-                                    mdlType = "wm"
-                                End If
-                            End If
-                        Else
-                            If callSampleSettingsForm.diluteRadioButton.Checked = True Then
-                                If callSampleSettingsForm.juiceCheckBox.Checked = True Then
-                                    mdlType = "dj"
-                                Else
-                                    mdlType = "dd"
-                                End If
-                            Else
-                                If callSampleSettingsForm.juiceCheckBox.Checked = True Then
-                                    mdlType = "dj"
-                                Else
-                                    mdlType = "dm"
-                                End If
-                            End If
-                        End If
+                        mdlType = "wm"
 
                         'Units
-                        If callSampleSettingsForm.ppbRadioButton.Checked = True Then metalUnits = "ppb" Else metalUnits = "ppm"
+                        metalUnits = "ppb"
+
+                        'Get analytes and results
                         cellValue = ExcelApp.Cells(rowNumber, 2).Value
 
                         Do While cellValue = "" And rowNumber < lastRow + 1
@@ -236,235 +146,145 @@ Public Class Form1
                                 Select Case metalName
                                     Case "Ag"
                                         If metalMass = My.Settings.AgMass Then
-                                            analysisCode = "SILVER-ICP-MS"
-                                            metalAnalyte = "Silver"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmAgTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmAgTextBox.Text
+                                            finalMDL = Form3.wmAgTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Al"
                                         If metalMass = My.Settings.AlMass Then
-                                            analysisCode = "ALUMINUM-ICP-MS"
-                                            metalAnalyte = "Aluminum"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmAlTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmAlTextBox.Text
+                                            finalMDL = Form3.wmAlTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "As"
                                         If metalMass = My.Settings.AsMass Then
-                                            analysisCode = "ARSENIC-ICP-MS"
-                                            metalAnalyte = "Arsenic"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmAsTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmAsTextBox.Text
-                                            If mdlType = "wj" Then finalMDL = Form3.wjAsTextBox.Text
+                                            finalMDL = Form3.wmAsTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "B"
                                         If metalMass = My.Settings.BMass Then
-                                            analysisCode = "BORON-ICP-MS"
-                                            metalAnalyte = "Boron"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmBTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmBTextBox.Text
+                                            finalMDL = Form3.wmBTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Ba"
                                         If metalMass = My.Settings.BaMass Then
-                                            analysisCode = "BARIUM-ICP-MS"
-                                            metalAnalyte = "Barium"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmBaTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmBaTextBox.Text
+                                            finalMDL = Form3.wmBaTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Be"
                                         If metalMass = My.Settings.BeMass Then
-                                            analysisCode = "BERYLLIUM-ICP-MS"
-                                            metalAnalyte = "Beryllium"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmBeTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmBeTextBox.Text
+                                            finalMDL = Form3.wmBeTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Cd"
                                         If metalMass = My.Settings.CdMass Then
-                                            analysisCode = "CADMIUM-ICP-MS"
-                                            metalAnalyte = "Cadmium"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmCdTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmCdTextBox.Text
-                                            If mdlType = "wj" Then finalMDL = Form3.wjCdTextBox.Text
+                                            finalMDL = Form3.wmCdTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Co"
                                         If metalMass = My.Settings.CoMass Then
-                                            analysisCode = "COBALT-ICP-MS"
-                                            metalAnalyte = "Cobalt"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmCoTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmCoTextBox.Text
+                                            finalMDL = Form3.wmCoTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Cr"
                                         If metalMass = My.Settings.CrMass Then
-                                            analysisCode = "CHROMIUM-ICP-MS"
-                                            metalAnalyte = "Chromium"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmCrTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmCrTextBox.Text
-                                            If mdlType = "wj" Then finalMDL = Form3.wjCrTextBox.Text
+                                            finalMDL = Form3.wmCrTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Cu"
                                         If metalMass = My.Settings.CuMass Then
-                                            analysisCode = "COPPER-ICP-MS"
-                                            metalAnalyte = "Copper"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmCuTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmCuTextBox.Text
-                                            If mdlType = "wj" Then finalMDL = Form3.wjCuTextBox.Text
+                                            finalMDL = Form3.wmCuTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Mn"
                                         If metalMass = My.Settings.MnMass Then
-                                            analysisCode = "MANGANESE-ICP-MS"
-                                            metalAnalyte = "Manganese"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmMnTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmMnTextBox.Text
+                                            finalMDL = Form3.wmMnTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Mo"
                                         If metalMass = My.Settings.MoMass Then
-                                            analysisCode = "MOLYBDENUM-ICP-MS"
-                                            metalAnalyte = "Molybdenum"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmMoTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmMoTextBox.Text
+                                            finalMDL = Form3.wmMoTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Ni"
                                         If metalMass = My.Settings.NiMass Then
-                                            analysisCode = "NICKEL-ICP-MS"
-                                            metalAnalyte = "Nickel"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmNiTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmNiTextBox.Text
+                                            finalMDL = Form3.wmNiTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "P"
                                         If metalMass = My.Settings.PMass Then
-                                            analysisCode = "PHOSPHOR-ICP-MS"
-                                            metalAnalyte = "Phosphorus"
-                                            If mdlType = "wm" Then finalMDL = Form3.wmPTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmPTextBox.Text
+                                            finalMDL = Form3.wmPTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Pb"
                                         If metalMass = My.Settings.PbMass Then
-                                            If My.Settings.leadConsumer = True Then
-                                                analysisCode = "LEAD_CONSUM"
-                                                metalAnalyte = "Lead"
-                                            Else
-                                                analysisCode = "LEAD-ICP-MS"
-                                                metalAnalyte = "Lead"
-                                            End If
-                                            If mdlType = "wd" Then finalMDL = Form3.wdPbTextBox.Text
-                                            If mdlType = "dd" Then finalMDL = Form3.ddPbTextBox.Text
-                                            If mdlType = "wm" Then finalMDL = Form3.wmPbTextBox.Text
-                                            If mdlType = "dm" Then finalMDL = Form3.dmPbTextBox.Text
-                                            If mdlType = "wj" Then finalMDL = Form3.wjPbTextBox.Text
+                                            finalMDL = Form3.wmPbTextBox.Text
                                         Else
                                             GoTo nextLine
                                         End If
                                     Case "Pd"
-                                            If metalMass = My.Settings.PdMass Then
-                                                analysisCode = "PALLADIUM-ICP-MS"
-                                                metalAnalyte = "Palladium"
-                                                If mdlType = "wm" Then finalMDL = Form3.wmPdTextBox.Text
-                                                If mdlType = "dm" Then finalMDL = Form3.dmPdTextBox.Text
-                                            Else
-                                                GoTo nextLine
-                                            End If
-                                    Case "Sb"
-                                            If metalMass = My.Settings.SbMass Then
-                                                analysisCode = "ANTIMONY-ICP-MS"
-                                                metalAnalyte = "Antimony"
-                                                If mdlType = "wm" Then finalMDL = Form3.wmSbTextBox.Text
-                                                If mdlType = "dm" Then finalMDL = Form3.dmSbTextBox.Text
-                                            Else
-                                                GoTo nextLine
-                                            End If
-                                    Case "Se"
-                                            If metalMass = My.Settings.SeMass Then
-                                                analysisCode = "SELENIUM-ICP-MS"
-                                                metalAnalyte = "Selenium"
-                                                If mdlType = "wm" Then finalMDL = Form3.wmSeTextBox.Text
-                                                If mdlType = "dm" Then finalMDL = Form3.dmSeTextBox.Text
-                                                If mdlType = "wj" Then finalMDL = Form3.wjSeTextBox.Text
-                                            Else
-                                                GoTo nextLine
-                                            End If
-                                    Case "Sn"
-                                            If metalMass = My.Settings.SnMass Then
-                                                analysisCode = "TIN-ICP-MS"
-                                                metalAnalyte = "Tin"
-                                                If mdlType = "wd" Then finalMDL = Form3.wdSnTextBox.Text
-                                                If mdlType = "dd" Then finalMDL = Form3.ddSnTextBox.Text
-                                                If mdlType = "wm" Then finalMDL = Form3.wmSnTextBox.Text
-                                                If mdlType = "dm" Then finalMDL = Form3.dmSnTextBox.Text
-                                            Else
-                                                GoTo nextLine
-                                            End If
-                                    Case "Ti"
-                                            If metalMass = My.Settings.TiMass Then
-                                                analysisCode = "TITANIUM-ICP-MS"
-                                                metalAnalyte = "Titanium"
-                                                If mdlType = "wm" Then finalMDL = Form3.wmTiTextBox.Text
-                                                If mdlType = "dm" Then finalMDL = Form3.dmTiTextBox.Text
-                                            Else
-                                                GoTo nextLine
-                                            End If
-                                    Case "Tl"
-                                            If metalMass = My.Settings.TlMass Then
-                                                analysisCode = "THALLIUM-ICP-MS"
-                                                metalAnalyte = "Thallium"
-                                                If mdlType = "wm" Then finalMDL = Form3.wmTlTextBox.Text
-                                                If mdlType = "dm" Then finalMDL = Form3.dmTlTextBox.Text
-                                            Else
-                                                GoTo nextLine
-                                            End If
-                                    Case "V"
-                                            If metalMass = My.Settings.VMass Then
-                                                analysisCode = "VANADIUM-ICP-MS"
-                                                metalAnalyte = "Vanadium"
-                                                If mdlType = "wm" Then finalMDL = Form3.wmVTextBox.Text
-                                                If mdlType = "dm" Then finalMDL = Form3.dmVTextBox.Text
-                                            Else
-                                                GoTo nextLine
-                                            End If
-                                    Case "Zn"
-                                            If metalMass = My.Settings.ZnMass Then
-                                                analysisCode = "ZINC-ICP-MS"
-                                                metalAnalyte = "Zinc"
-                                                If mdlType = "wm" Then finalMDL = Form3.wmZnTextBox.Text
-                                                If mdlType = "dm" Then finalMDL = Form3.dmZnTextBox.Text
-                                            Else
-                                                GoTo nextLine
-                                            End If
-                                    Case Else
+                                        If metalMass = My.Settings.PdMass Then
+                                            finalMDL = Form3.wmPdTextBox.Text
+                                        Else
                                             GoTo nextLine
+                                        End If
+                                    Case "Sb"
+                                        If metalMass = My.Settings.SbMass Then
+                                            finalMDL = Form3.wmSbTextBox.Text
+                                        Else
+                                            GoTo nextLine
+                                        End If
+                                    Case "Se"
+                                        If metalMass = My.Settings.SeMass Then
+                                            finalMDL = Form3.wmSeTextBox.Text
+                                        Else
+                                            GoTo nextLine
+                                        End If
+                                    Case "Sn"
+                                        If metalMass = My.Settings.SnMass Then
+                                            finalMDL = Form3.wmSnTextBox.Text
+                                        Else
+                                            GoTo nextLine
+                                        End If
+                                    Case "Ti"
+                                        If metalMass = My.Settings.TiMass Then
+                                            finalMDL = Form3.wmTiTextBox.Text
+                                        Else
+                                            GoTo nextLine
+                                        End If
+                                    Case "Tl"
+                                        If metalMass = My.Settings.TlMass Then
+                                            finalMDL = Form3.wmTlTextBox.Text
+                                        Else
+                                            GoTo nextLine
+                                        End If
+                                    Case "V"
+                                        If metalMass = My.Settings.VMass Then
+                                            finalMDL = Form3.wmVTextBox.Text
+                                        Else
+                                            GoTo nextLine
+                                        End If
+                                    Case "Zn"
+                                        If metalMass = My.Settings.ZnMass Then
+                                            finalMDL = Form3.wmZnTextBox.Text
+                                        Else
+                                            GoTo nextLine
+                                        End If
+                                    Case Else
+                                        GoTo nextLine
                                 End Select
-
-                                'Conversion if units is ppm
-                                If metalUnits = "ppm" Then
-                                    metalTest = (metalTest / 1000)
-                                    finalMDL = (finalMDL / 1000)
-                                End If
 
                                 'Dim textResult As String = 0
                                 Dim roundResult As Decimal = Nothing
@@ -518,110 +338,23 @@ Public Class Form1
 
                                 End If
 
-                                If metalUnits = "ppm" Then
+                                reportedMDL = finalMDL
 
-                                    If finalMDL < 1000000 Then
-                                        reportedMDL = CStr(Format(finalMDL, "000000"))
-                                    End If
+                                'Add data to sample array
+                                sampleArrayCount = sampleArrayCount + 1
+                                My.Settings.sampleArrayCount = sampleArrayCount
+                                ReDim Preserve SampleArray(9, sampleArrayCount)
 
-                                    If finalMDL < 100000 Then
-                                        reportedMDL = CStr(Format(finalMDL, "00000"))
-                                    End If
-
-                                    If finalMDL < 10000 Then
-                                        reportedMDL = CStr(Format(finalMDL, "0000"))
-                                    End If
-
-                                    If finalMDL < 1000 Then
-                                        reportedMDL = CStr(Format(finalMDL, "000"))
-                                    End If
-
-                                    If finalMDL < 100 Then
-                                        reportedMDL = CStr(Format(finalMDL, "00.0"))
-                                    End If
-
-                                    If finalMDL < 10 Then
-                                        reportedMDL = CStr(Format(finalMDL, "0.00"))
-                                    End If
-
-                                    If finalMDL < 1 Then
-                                        reportedMDL = CStr(Format(finalMDL, "0.000"))
-                                    End If
-
-                                Else
-                                    reportedMDL = finalMDL
-                                End If
-
-                                Dim nextRow As String = Nothing
-
-                                'Enter Data
-                                If count = 0 Then
-
-                                    'Enter the data into the temp worksheet
-                                    ExcelApp.Sheets("temp").Activate()
-                                    ExcelApp.Range("A1").Select()
-
-                                    'Add Headers
-                                    ExcelApp.Range("A1").Value = "SIDN"
-                                    ExcelApp.Range("B1").Value = "ACODE"
-                                    ExcelApp.Range("C1").Value = "ANLNAME"
-                                    ExcelApp.Range("D1").Value = "RLT"
-                                    ExcelApp.Range("E1").Value = "RMDL"
-                                    ExcelApp.Range("F1").Value = "RUNT"
-                                    ExcelApp.Range("G1").Value = "ASTD"
-                                    ExcelApp.Range("H1").Value = "AEND"
-                                    ExcelApp.Range("I1").Value = "AANALYST"
-
-                                    'change format of rlt and rmdl columns to text
-                                    ExcelApp.Columns(4).EntireColumn.NumberFormat = "@"
-                                    ExcelApp.Columns(5).EntireColumn.NumberFormat = "@"
-
-                                    ''Add headers to temp2
-                                    'ExcelApp.Sheets("temp2").Activate()
-                                    'ExcelApp.Range("A1").Select()
-
-                                    ''Add Headers
-                                    'ExcelApp.Range("A1").Value = "SIDN"
-                                    'ExcelApp.Range("B1").Value = "ACODE"
-                                    'ExcelApp.Range("C1").Value = "ANLNAME"
-                                    'ExcelApp.Range("D1").Value = "RLT"
-                                    'ExcelApp.Range("E1").Value = "RMDL"
-                                    'ExcelApp.Range("F1").Value = "RUNT"
-                                    'ExcelApp.Range("G1").Value = "ASTD"
-                                    'ExcelApp.Range("H1").Value = "AEND"
-                                    'ExcelApp.Range("I1").Value = "AANALYST"
-
-                                    'change format of rlt and rmdl columns to text
-                                    ExcelApp.Columns(4).EntireColumn.NumberFormat = "@"
-                                    'ExcelApp.Columns(5).EntireColumn.NumberFormat = "@"
-
-                                End If
-
-                                'If textResult = 1 Then
-                                'Enter text results onto temp2 sheet
-                                'ExcelApp.Sheets("temp2").Activate()
-                                'ExcelApp.Range("A1").Select()
-                                'Else
-                                'Enter numerical results onto temp sheet
-                                ExcelApp.Sheets("temp").Activate()
-                                ExcelApp.Range("A1").Select()
-                                'End If
-
-                                'Select next row
-                                nextRow = ExcelApp.Cells(ExcelApp.Rows.Count, 1).End(Excel.XlDirection.xlUp).Row + 1
-
-                                'Enter data
-                                ExcelApp.Range("A" & nextRow).Value = sampleID
-                                ExcelApp.Range("B" & nextRow).Value = analysisCode
-                                ExcelApp.Range("C" & nextRow).Value = metalAnalyte
-                                ExcelApp.Range("D" & nextRow).Value = metalResult
-                                ExcelApp.Range("E" & nextRow).Value = reportedMDL
-                                ExcelApp.Range("F" & nextRow).Value = metalUnits
-                                ExcelApp.Range("G" & nextRow).Value = My.Settings.startDate
-                                ExcelApp.Range("H" & nextRow).Value = My.Settings.endDate
-                                ExcelApp.Range("I" & nextRow).Value = metalAnalyst
-
-                                count = count + 1
+                                SampleArray(0, sampleArrayCount) = False
+                                SampleArray(1, sampleArrayCount) = sampleID
+                                SampleArray(2, sampleArrayCount) = metalName
+                                SampleArray(3, sampleArrayCount) = metalTest
+                                SampleArray(4, sampleArrayCount) = finalMDL
+                                SampleArray(5, sampleArrayCount) = "ppb"
+                                SampleArray(6, sampleArrayCount) = sigFigMax
+                                SampleArray(7, sampleArrayCount) = roundResult
+                                SampleArray(8, sampleArrayCount) = metalResult
+                                SampleArray(9, sampleArrayCount) = reportedMDL
 
                             End If
 
@@ -636,6 +369,7 @@ nextLine:
                         Loop
 
                     Else
+
                         Do While cellValue = "" And rowNumber < lastRow + 1
                             rowNumber = rowNumber + 1
                             cellValue = ExcelApp.Cells(rowNumber, 2).Value
@@ -647,157 +381,215 @@ nextLine:
                         Loop
 
                     End If
-
                 Else
+
 duplicateContinue:
+
                     Do While cellValue = "" And rowNumber < lastRow + 1
                         rowNumber = rowNumber + 1
                         cellValue = ExcelApp.Cells(rowNumber, 2).Value
                     Loop
+
                     Do While cellValue <> "" And rowNumber < lastRow + 1
                         rowNumber = rowNumber + 1
                         cellValue = ExcelApp.Cells(rowNumber, 2).Value
                     Loop
+
                 End If
             End If
             rowNumber = rowNumber + 1
         Next
 
-exportNow:
-        'Check if analyst wants to see the CSV file
-        If My.Settings.reviewExport = True Then
+        'Get one sample into the export array and go to form 4 for changes
+        Dim exportArrayCount As Integer = 0
+        For rowNum = 0 To CInt(My.Settings.sampleArrayCount)
+            If SampleArray(1, rowNum) <> "" Then
+                exportArrayCount = exportArrayCount + 1
+                My.Settings.exportArrayCount = exportArrayCount
 
-            'show file
-            'ExcelApp.Sheets("temp2").Activate()
-            'ExcelApp.Range("A1").Select()
-            'ExcelApp.Sheets("temp2").Columns("A:I").AutoFit()
+                'Transfer information from sample array to the export array
+                exportArray(0, exportArrayCount) = SampleArray(0, rowNum)
+                exportArray(1, exportArrayCount) = SampleArray(1, rowNum)
+                exportArray(2, exportArrayCount) = SampleArray(2, rowNum)
+                exportArray(3, exportArrayCount) = SampleArray(3, rowNum)
+                exportArray(4, exportArrayCount) = SampleArray(4, rowNum)
+                exportArray(5, exportArrayCount) = SampleArray(5, rowNum)
+                exportArray(6, exportArrayCount) = SampleArray(6, rowNum)
+                exportArray(7, exportArrayCount) = SampleArray(7, rowNum)
+                exportArray(8, exportArrayCount) = SampleArray(8, rowNum)
+                exportArray(9, exportArrayCount) = SampleArray(9, rowNum)
 
-            ExcelApp.Sheets("temp").Activate()
-            ExcelApp.Range("A1").Select()
-            ExcelApp.Sheets("temp").Columns("A:I").AutoFit()
-
-            Dim continueReview As String = Nothing
-            continueReview = MsgBox("Please review the data." & vbCrLf & "Then click 'OK' to export the data to LabWorks", vbOKCancel + vbMsgBoxSetForeground, "Final Review")
-
-            If continueReview = vbOK Then
-            Else
-                MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
-
-                'Close Run File
-                ExcelApp.Sheets(My.Settings.fileName).Activate()
-                ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
-
-                'Release Excel Objects and close Excel
-                ExcelApp.Visible = True
-                If Not ExcelWorkSheet Is Nothing Then
-                    Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkSheet)
-                    ExcelWorkSheet = Nothing
+                'Open Form 4 for one sample
+                If SampleArray(1, rowNum) <> SampleArray(1, rowNum + 1) Then
+                    My.Settings.sampleID = exportArray(1, exportArrayCount)
+                    'Go to Form 4 and show results and allow changes
+                    callSampleSettingsForm.ShowDialog(Me)
+                    exportArrayCount = 0
+                    My.Settings.exportArrayCount = exportArrayCount
+                    ReDim exportArray(9, exportArrayCount)
                 End If
 
-                If Not ExcelWorkbook Is Nothing Then
-                    Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkbook)
-                    ExcelWorkbook = Nothing
-                End If
-
-                If Not ExcelWorkBooks Is Nothing Then
-                    Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkBooks)
-                    ExcelWorkBooks = Nothing
-                End If
-
-                ExcelApp.Quit()
-                If Not ExcelApp Is Nothing Then
-                    Runtime.InteropServices.Marshal.ReleaseComObject(ExcelApp)
-                    ExcelApp = Nothing
-                End If
-                GoTo endit
             End If
-        Else
-            Dim finalReview As String = Nothing
-            finalReview = MsgBox("Would you like to review before exporting?", MsgBoxStyle.YesNoCancel + vbMsgBoxSetForeground, "Final Review")
-            If finalReview = vbYes Then
+        Next
 
-                'show file
-                'ExcelApp.Sheets("temp2").Activate()
-                'ExcelApp.Range("A1").Select()
-                'ExcelApp.Sheets("temp2").Columns("A:I").AutoFit()
-
-                ExcelApp.Sheets("temp").Activate()
-                ExcelApp.Range("A1").Select()
-                ExcelApp.Sheets("temp").Columns("A:I").AutoFit()
-
-                Dim continueReview As String = Nothing
-                continueReview = MsgBox("Please review the data." & vbCrLf & "Then click 'OK' to export the data to LabWorks", vbOKCancel + vbMsgBoxSetForeground, "Final Review")
-
-                If continueReview = vbOK Then
-                Else
-                    MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
-
-                    'Close Run File
-                    ExcelApp.Sheets(My.Settings.fileName).Activate()
-                    ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
-
-                    'Release Excel Objects and close Excel
-                    ExcelApp.Visible = True
-                    If Not ExcelWorkSheet Is Nothing Then
-                        Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkSheet)
-                        ExcelWorkSheet = Nothing
-                    End If
-
-                    If Not ExcelWorkbook Is Nothing Then
-                        Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkbook)
-                        ExcelWorkbook = Nothing
-                    End If
-
-                    If Not ExcelWorkBooks Is Nothing Then
-                        Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkBooks)
-                        ExcelWorkBooks = Nothing
-                    End If
-
-                    ExcelApp.Quit()
-                    If Not ExcelApp Is Nothing Then
-                        Runtime.InteropServices.Marshal.ReleaseComObject(ExcelApp)
-                        ExcelApp = Nothing
-                    End If
-                    GoTo endit
-                End If
-            Else
-                If finalReview = vbCancel Then
-                    MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
-
-                    'Close Run File
-                    ExcelApp.Sheets(My.Settings.fileName).Activate()
-                    ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
-
-                    'Release Excel Objects and close Excel
-                    ExcelApp.Visible = True
-                    If Not ExcelWorkSheet Is Nothing Then
-                        Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkSheet)
-                        ExcelWorkSheet = Nothing
-                    End If
-
-                    If Not ExcelWorkbook Is Nothing Then
-                        Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkbook)
-                        ExcelWorkbook = Nothing
-                    End If
-
-                    If Not ExcelWorkBooks Is Nothing Then
-                        Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkBooks)
-                        ExcelWorkBooks = Nothing
-                    End If
-
-                    ExcelApp.Quit()
-                    If Not ExcelApp Is Nothing Then
-                        Runtime.InteropServices.Marshal.ReleaseComObject(ExcelApp)
-                        ExcelApp = Nothing
-                    End If
-                    GoTo endit
-                End If
-            End If
-        End If
-
-        'Go to the temp worksheet for numerical results
+        'Work through revised sample array and add to temp sheet
+        'Enter the data into the temp worksheet
         ExcelApp.Sheets("temp").Activate()
         ExcelApp.Range("A1").Select()
+
+        'Add Headers
+        ExcelApp.Range("A1").Value = "SIDN"
+        ExcelApp.Range("B1").Value = "ACODE"
+        ExcelApp.Range("C1").Value = "ANLNAME"
+        ExcelApp.Range("D1").Value = "RLT"
+        ExcelApp.Range("E1").Value = "RMDL"
+        ExcelApp.Range("F1").Value = "RUNT"
+        ExcelApp.Range("G1").Value = "ASTD"
+        ExcelApp.Range("H1").Value = "AEND"
+        ExcelApp.Range("I1").Value = "AANALYST"
+
+        'change format of rlt and rmdl columns to text
+        ExcelApp.Columns(4).EntireColumn.NumberFormat = "@"
+        'ExcelApp.Columns(5).EntireColumn.NumberFormat = "@"
+
+        Dim nextRow As String = Nothing
+        For rowNum = 0 To CInt(My.Settings.sampleArrayCount)
+            If SampleArray(1, rowNum) <> "" Then
+
+                'Select next row
+                nextRow = ExcelApp.Cells(ExcelApp.Rows.Count, 1).End(Excel.XlDirection.xlUp).Row + 1
+
+                'Get analysis code and analyte name
+                Select Case SampleArray(2, rowNum)
+                    Case "Ag"
+                        analysisCode = "SILVER-ICP-MS"
+                        metalAnalyte = "Silver"
+                    Case "Al"
+                        analysisCode = "ALUMINUM-ICP-MS"
+                        metalAnalyte = "Aluminum"
+                    Case "As"
+                        analysisCode = "ARSENIC-ICP-MS"
+                        metalAnalyte = "Arsenic"
+                    Case "B"
+                        analysisCode = "BORON-ICP-MS"
+                        metalAnalyte = "Boron"
+                    Case "Ba"
+                        analysisCode = "BARIUM-ICP-MS"
+                        metalAnalyte = "Barium"
+                    Case "Be"
+                        analysisCode = "BERYLLIUM-ICP-MS"
+                        metalAnalyte = "Beryllium"
+                    Case "Cd"
+                        analysisCode = "CADMIUM-ICP-MS"
+                        metalAnalyte = "Cadmium"
+                    Case "Co"
+                        analysisCode = "COBALT-ICP-MS"
+                        metalAnalyte = "Cobalt"
+                    Case "Cr"
+                        analysisCode = "CHROMIUM-ICP-MS"
+                        metalAnalyte = "Chromium"
+                    Case "Cu"
+                        analysisCode = "COPPER-ICP-MS"
+                        metalAnalyte = "Copper"
+                    Case "Mn"
+                        analysisCode = "MANGANESE-ICP-MS"
+                        metalAnalyte = "Manganese"
+                    Case "Mo"
+                        analysisCode = "MOLYBDENUM-ICP-MS"
+                        metalAnalyte = "Molybdenum"
+                    Case "Ni"
+                        analysisCode = "NICKEL-ICP-MS"
+                        metalAnalyte = "Nickel"
+                    Case "P"
+                        analysisCode = "PHOSPHOR-ICP-MS"
+                        metalAnalyte = "Phosphorus"
+                    Case "Pb"
+                        If SampleArray(0, rowNum) = True Then
+                            analysisCode = "LEAD_CONSUM"
+                            metalAnalyte = "Lead"
+                        Else
+                            analysisCode = "LEAD-ICP-MS"
+                            metalAnalyte = "Lead"
+                        End If
+                    Case "Pd"
+                        analysisCode = "PALLADIUM-ICP-MS"
+                        metalAnalyte = "Palladium"
+                    Case "Sb"
+                        analysisCode = "ANTIMONY-ICP-MS"
+                        metalAnalyte = "Antimony"
+                    Case "Se"
+                        analysisCode = "SELENIUM-ICP-MS"
+                        metalAnalyte = "Selenium"
+                    Case "Sn"
+                        analysisCode = "TIN-ICP-MS"
+                        metalAnalyte = "Tin"
+                    Case "Ti"
+                        analysisCode = "TITANIUM-ICP-MS"
+                        metalAnalyte = "Titanium"
+                    Case "Tl"
+                        analysisCode = "THALLIUM-ICP-MS"
+                        metalAnalyte = "Thallium"
+                    Case "V"
+                        analysisCode = "VANADIUM-ICP-MS"
+                        metalAnalyte = "Vanadium"
+                    Case "Zn"
+                        analysisCode = "ZINC-ICP-MS"
+                        metalAnalyte = "Zinc"
+                End Select
+
+                'Enter data
+                ExcelApp.Range("A" & nextRow).Value = SampleArray(1, rowNum)
+                ExcelApp.Range("B" & nextRow).Value = analysisCode
+                ExcelApp.Range("C" & nextRow).Value = metalAnalyte
+                ExcelApp.Range("D" & nextRow).Value = SampleArray(8, rowNum)
+                ExcelApp.Range("E" & nextRow).Value = SampleArray(9, rowNum)
+                ExcelApp.Range("F" & nextRow).Value = SampleArray(5, rowNum)
+                ExcelApp.Range("G" & nextRow).Value = My.Settings.startDate
+                ExcelApp.Range("H" & nextRow).Value = My.Settings.endDate
+                ExcelApp.Range("I" & nextRow).Value = metalAnalyst
+            End If
+        Next
+
+exportNow:
+        ExcelApp.Sheets("temp").Activate()
+        ExcelApp.Range("A1").Select()
+        ExcelApp.Sheets("temp").Columns("A:I").AutoFit()
+
+        Dim continueReview As String = Nothing
+        continueReview = MsgBox("Please review the data." & vbCrLf & "Then click 'OK' to export the data to LabWorks", vbOKCancel + vbMsgBoxSetForeground, "Final Review")
+
+        If continueReview = vbOK Then
+        Else
+            MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
+
+            'Close Run File
+            ExcelApp.Sheets(My.Settings.fileName).Activate()
+            ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
+
+            'Release Excel Objects and close Excel
+            ExcelApp.Visible = True
+            If Not ExcelWorkSheet Is Nothing Then
+                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkSheet)
+                ExcelWorkSheet = Nothing
+            End If
+
+            If Not ExcelWorkbook Is Nothing Then
+                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkbook)
+                ExcelWorkbook = Nothing
+            End If
+
+            If Not ExcelWorkBooks Is Nothing Then
+                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkBooks)
+                ExcelWorkBooks = Nothing
+            End If
+
+            ExcelApp.Quit()
+            If Not ExcelApp Is Nothing Then
+                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelApp)
+                ExcelApp = Nothing
+            End If
+            GoTo endit
+        End If
 
         'Copy worksheet
         ExcelApp.Sheets("temp").Copy()
@@ -840,52 +632,6 @@ CheckLoop:
         'Delete the temp file in CSV Temp
         MsgBox("Click OK after Labworks has imported the file.", vbMsgBoxSetForeground)
         Kill("L:\eRecords\Chemistry\CSV_Temp\Temp_CSV.csv")
-
-        '        'Go to the temp2 worksheet for text results
-        '        ExcelApp.Sheets("temp2").Activate()
-        '        ExcelApp.Range("A1").Select()
-
-        '        'Copy worksheet
-        '        ExcelApp.Sheets("temp2").Copy()
-
-        '        'Check if someone else is running the macro
-        '        Dim LoopCount2 As String = 1
-
-        'CheckLoop2:
-        '        If Not Dir("L:\eRecords\Chemistry\CSV_Temp\Temp_CSV.csv", vbDirectory) = vbNullString Then
-        '            MsgBox("Someone else is running a macro, please wait..." & vbCrLf & "Attempt: " & LoopCount2 & " of 3", vbInformation + vbMsgBoxSetForeground)
-        '            System.Threading.Thread.Sleep(3000)
-        '            LoopCount2 = LoopCount2 + 1
-        '            If LoopCount2 < 3 Then
-        '                GoTo CheckLoop2
-        '            Else
-        '                MsgBox("Error: Temp file already exists. Notify QA.", vbMsgBoxSetForeground)
-        '                GoTo endit
-        '            End If
-        '        End If
-
-        '        'Create temp2 CSV file and close
-        '        ExcelApp.ActiveWorkbook.SaveAs(Filename:="L:\eRecords\Chemistry\CSV_Temp\Temp_CSV", FileFormat:=Excel.XlFileFormat.xlCSV)
-        '        ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
-
-        '        'Import Temp2 CSV File
-        '        'Check for Windows version (32-bit or 64-bit)
-        '        ChDir("L:\eRecords\Chemistry\CSV_Temp\")
-
-        '        If FileFolderExists("C:\Program Files\PerkinElmer\LABWORKS64\POSTRESULTS6.exe") Then
-        '            Call Shell(Environ$("COMSPEC") & " /c L:\eRecords\Chemistry\CSV_Temp\MCexcel.bat", vbNormalFocus)
-        '        Else
-        '            If FileFolderExists("C:\Program Files (x86)\PerkinElmer\LABWORKS64\POSTRESULTS6.exe") Then
-        '                Call Shell(Environ$("COMSPEC") & " /c L:\eRecords\Chemistry\CSV_Temp\MCexcel_x64.bat", vbNormalFocus)
-        '            Else
-        '                MsgBox("Labworks not found, please contact QA.", vbMsgBoxSetForeground)
-        '                GoTo endit
-        '            End If
-        '        End If
-
-        '        'Delete the temp2 file in CSV Temp
-        '        MsgBox("Click OK after Labworks has imported the file.", vbMsgBoxSetForeground)
-        '        Kill("L:\eRecords\Chemistry\CSV_Temp\Temp_CSV.csv")
 
         'Close Run File
         ExcelApp.Sheets(My.Settings.fileName).Activate()
@@ -961,11 +707,11 @@ EarlyExit:
     End Function
 
     Private Sub SelectMassesToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles SelectMassesToolStripMenuItem1.Click
-        Form2.Show()
+        Form2.ShowDialog()
     End Sub
 
     Private Sub ChangeDefaultMDLsToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ChangeDefaultMDLsToolStripMenuItem1.Click
-        Form3.Show()
+        Form3.ShowDialog()
     End Sub
 
 End Class

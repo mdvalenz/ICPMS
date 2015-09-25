@@ -29,11 +29,11 @@ Partial Class Form1
         Me.headingLabel = New System.Windows.Forms.Label()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
         Me.Label1 = New System.Windows.Forms.Label()
+        Me.analystTextBox = New System.Windows.Forms.TextBox()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
-        Me.SelectMassesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SelectMassesToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ChangeDefaultMDLsToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.analystTextBox = New System.Windows.Forms.TextBox()
+        Me.SelectMassesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -89,6 +89,17 @@ Partial Class Form1
         Me.Label1.TabIndex = 5
         Me.Label1.Text = "Analyst LabWorks Login"
         '
+        'analystTextBox
+        '
+        Me.analystTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.ICP_MS_Export.My.MySettings.Default, "metalAnalyst", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.analystTextBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.analystTextBox.Location = New System.Drawing.Point(226, 103)
+        Me.analystTextBox.Name = "analystTextBox"
+        Me.analystTextBox.Size = New System.Drawing.Size(70, 26)
+        Me.analystTextBox.TabIndex = 3
+        Me.analystTextBox.Text = Global.ICP_MS_Export.My.MySettings.Default.metalAnalyst
+        Me.analystTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
         'MenuStrip1
         '
         Me.MenuStrip1.BackColor = System.Drawing.SystemColors.Control
@@ -99,13 +110,7 @@ Partial Class Form1
         Me.MenuStrip1.Size = New System.Drawing.Size(547, 24)
         Me.MenuStrip1.TabIndex = 7
         Me.MenuStrip1.Text = "MenuStrip1"
-        '
-        'SelectMassesToolStripMenuItem
-        '
-        Me.SelectMassesToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SelectMassesToolStripMenuItem1, Me.ChangeDefaultMDLsToolStripMenuItem1})
-        Me.SelectMassesToolStripMenuItem.Name = "SelectMassesToolStripMenuItem"
-        Me.SelectMassesToolStripMenuItem.Size = New System.Drawing.Size(61, 20)
-        Me.SelectMassesToolStripMenuItem.Text = "Settings"
+        Me.MenuStrip1.Visible = False
         '
         'SelectMassesToolStripMenuItem1
         '
@@ -119,16 +124,12 @@ Partial Class Form1
         Me.ChangeDefaultMDLsToolStripMenuItem1.Size = New System.Drawing.Size(189, 22)
         Me.ChangeDefaultMDLsToolStripMenuItem1.Text = "Change Default MDLs"
         '
-        'analystTextBox
+        'SelectMassesToolStripMenuItem
         '
-        Me.analystTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.ICP_MS_Export.My.MySettings.Default, "metalAnalyst", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.analystTextBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.analystTextBox.Location = New System.Drawing.Point(226, 103)
-        Me.analystTextBox.Name = "analystTextBox"
-        Me.analystTextBox.Size = New System.Drawing.Size(70, 26)
-        Me.analystTextBox.TabIndex = 3
-        Me.analystTextBox.Text = Global.ICP_MS_Export.My.MySettings.Default.metalAnalyst
-        Me.analystTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.SelectMassesToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SelectMassesToolStripMenuItem1, Me.ChangeDefaultMDLsToolStripMenuItem1})
+        Me.SelectMassesToolStripMenuItem.Name = "SelectMassesToolStripMenuItem"
+        Me.SelectMassesToolStripMenuItem.Size = New System.Drawing.Size(61, 20)
+        Me.SelectMassesToolStripMenuItem.Text = "Settings"
         '
         'Form1
         '

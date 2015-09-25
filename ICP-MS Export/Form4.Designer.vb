@@ -40,21 +40,22 @@ Partial Class Form4
         Me.Label4 = New System.Windows.Forms.Label()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.ExitProgramToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Button1 = New System.Windows.Forms.Button()
-        Me.reviewCheckBox = New System.Windows.Forms.CheckBox()
+        Me.skipButton = New System.Windows.Forms.Button()
         Me.exportButton = New System.Windows.Forms.Button()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.sigFig3RadioButton = New System.Windows.Forms.RadioButton()
         Me.sigFig2RadioButton = New System.Windows.Forms.RadioButton()
+        Me.consumerLeadCheckBox = New System.Windows.Forms.CheckBox()
+        Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.endDateTimePicker = New System.Windows.Forms.DateTimePicker()
         Me.startDateTimePicker = New System.Windows.Forms.DateTimePicker()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.consumerLeadCheckBox = New System.Windows.Forms.CheckBox()
+        Me.sampleNumberLabel = New System.Windows.Forms.Label()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'headingLabel
@@ -118,7 +119,7 @@ Partial Class Form4
         'returnButton
         '
         Me.returnButton.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.returnButton.Location = New System.Drawing.Point(264, 352)
+        Me.returnButton.Location = New System.Drawing.Point(264, 321)
         Me.returnButton.Name = "returnButton"
         Me.returnButton.Size = New System.Drawing.Size(80, 30)
         Me.returnButton.TabIndex = 1
@@ -232,7 +233,7 @@ Partial Class Form4
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExitProgramToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(376, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1062, 24)
         Me.MenuStrip1.TabIndex = 0
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -242,33 +243,21 @@ Partial Class Form4
         Me.ExitProgramToolStripMenuItem.Size = New System.Drawing.Size(86, 20)
         Me.ExitProgramToolStripMenuItem.Text = "Exit Program"
         '
-        'Button1
+        'skipButton
         '
-        Me.Button1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button1.Location = New System.Drawing.Point(150, 352)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(80, 30)
-        Me.Button1.TabIndex = 0
-        Me.Button1.TabStop = False
-        Me.Button1.Text = "Skip"
-        Me.Button1.UseVisualStyleBackColor = True
-        '
-        'reviewCheckBox
-        '
-        Me.reviewCheckBox.AutoSize = True
-        Me.reviewCheckBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.reviewCheckBox.Location = New System.Drawing.Point(147, 313)
-        Me.reviewCheckBox.Name = "reviewCheckBox"
-        Me.reviewCheckBox.Size = New System.Drawing.Size(197, 24)
-        Me.reviewCheckBox.TabIndex = 0
-        Me.reviewCheckBox.TabStop = False
-        Me.reviewCheckBox.Text = "Review before export"
-        Me.reviewCheckBox.UseVisualStyleBackColor = True
+        Me.skipButton.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.skipButton.Location = New System.Drawing.Point(150, 321)
+        Me.skipButton.Name = "skipButton"
+        Me.skipButton.Size = New System.Drawing.Size(80, 30)
+        Me.skipButton.TabIndex = 0
+        Me.skipButton.TabStop = False
+        Me.skipButton.Text = "Skip"
+        Me.skipButton.UseVisualStyleBackColor = True
         '
         'exportButton
         '
         Me.exportButton.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.exportButton.Location = New System.Drawing.Point(35, 352)
+        Me.exportButton.Location = New System.Drawing.Point(35, 321)
         Me.exportButton.Name = "exportButton"
         Me.exportButton.Size = New System.Drawing.Size(80, 30)
         Me.exportButton.TabIndex = 0
@@ -312,6 +301,29 @@ Partial Class Form4
         Me.sigFig2RadioButton.Text = "2 SigFigs"
         Me.sigFig2RadioButton.UseVisualStyleBackColor = True
         '
+        'consumerLeadCheckBox
+        '
+        Me.consumerLeadCheckBox.AutoSize = True
+        Me.consumerLeadCheckBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.consumerLeadCheckBox.Location = New System.Drawing.Point(47, 275)
+        Me.consumerLeadCheckBox.Name = "consumerLeadCheckBox"
+        Me.consumerLeadCheckBox.Size = New System.Drawing.Size(154, 24)
+        Me.consumerLeadCheckBox.TabIndex = 54
+        Me.consumerLeadCheckBox.TabStop = False
+        Me.consumerLeadCheckBox.Text = "Consumer Lead"
+        Me.consumerLeadCheckBox.UseVisualStyleBackColor = True
+        '
+        'DataGridView1
+        '
+        Me.DataGridView1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridView1.Location = New System.Drawing.Point(350, 12)
+        Me.DataGridView1.Name = "DataGridView1"
+        Me.DataGridView1.Size = New System.Drawing.Size(700, 339)
+        Me.DataGridView1.TabIndex = 55
+        '
         'endDateTimePicker
         '
         Me.endDateTimePicker.CustomFormat = "MMM, dd,yy"
@@ -338,45 +350,33 @@ Partial Class Form4
         Me.startDateTimePicker.TabStop = False
         Me.startDateTimePicker.Value = Global.ICP_MS_Export.My.MySettings.Default.startDate
         '
-        'Label2
+        'sampleNumberLabel
         '
-        Me.Label2.AutoSize = True
-        Me.Label2.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.ICP_MS_Export.My.MySettings.Default, "sampleID", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(180, 64)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(0, 20)
-        Me.Label2.TabIndex = 0
-        Me.Label2.Text = Global.ICP_MS_Export.My.MySettings.Default.sampleID
-        '
-        'consumerLeadCheckBox
-        '
-        Me.consumerLeadCheckBox.AutoSize = True
-        Me.consumerLeadCheckBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.consumerLeadCheckBox.Location = New System.Drawing.Point(47, 275)
-        Me.consumerLeadCheckBox.Name = "consumerLeadCheckBox"
-        Me.consumerLeadCheckBox.Size = New System.Drawing.Size(154, 24)
-        Me.consumerLeadCheckBox.TabIndex = 54
-        Me.consumerLeadCheckBox.TabStop = False
-        Me.consumerLeadCheckBox.Text = "Consumer Lead"
-        Me.consumerLeadCheckBox.UseVisualStyleBackColor = True
+        Me.sampleNumberLabel.AutoSize = True
+        Me.sampleNumberLabel.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.ICP_MS_Export.My.MySettings.Default, "sampleID", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.sampleNumberLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.sampleNumberLabel.Location = New System.Drawing.Point(180, 64)
+        Me.sampleNumberLabel.Name = "sampleNumberLabel"
+        Me.sampleNumberLabel.Size = New System.Drawing.Size(0, 20)
+        Me.sampleNumberLabel.TabIndex = 0
+        Me.sampleNumberLabel.Text = Global.ICP_MS_Export.My.MySettings.Default.sampleID
         '
         'Form4
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(376, 394)
+        Me.ClientSize = New System.Drawing.Size(1062, 362)
+        Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.consumerLeadCheckBox)
         Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.exportButton)
-        Me.Controls.Add(Me.reviewCheckBox)
-        Me.Controls.Add(Me.Button1)
+        Me.Controls.Add(Me.skipButton)
         Me.Controls.Add(Me.endDateTimePicker)
         Me.Controls.Add(Me.startDateTimePicker)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.juiceCheckBox)
-        Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.sampleNumberLabel)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
@@ -398,6 +398,7 @@ Partial Class Form4
         Me.MenuStrip1.PerformLayout()
         Me.GroupBox4.ResumeLayout(False)
         Me.GroupBox4.PerformLayout()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -414,7 +415,7 @@ Partial Class Form4
     Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
     Friend WithEvents GroupBox3 As System.Windows.Forms.GroupBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents sampleNumberLabel As System.Windows.Forms.Label
     Friend WithEvents juiceCheckBox As System.Windows.Forms.CheckBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents Label4 As System.Windows.Forms.Label
@@ -422,11 +423,11 @@ Partial Class Form4
     Friend WithEvents endDateTimePicker As System.Windows.Forms.DateTimePicker
     Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
     Friend WithEvents ExitProgramToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Button1 As System.Windows.Forms.Button
-    Friend WithEvents reviewCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents skipButton As System.Windows.Forms.Button
     Friend WithEvents exportButton As System.Windows.Forms.Button
     Friend WithEvents GroupBox4 As System.Windows.Forms.GroupBox
     Friend WithEvents sigFig3RadioButton As System.Windows.Forms.RadioButton
     Friend WithEvents sigFig2RadioButton As System.Windows.Forms.RadioButton
     Friend WithEvents consumerLeadCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents DataGridView1 As System.Windows.Forms.DataGridView
 End Class

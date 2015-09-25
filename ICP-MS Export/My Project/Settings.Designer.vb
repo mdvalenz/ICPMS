@@ -1313,6 +1313,42 @@ Namespace My
                 Me("leadConsumer") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property sampleArrayCount() As String
+            Get
+                Return CType(Me("sampleArrayCount"),String)
+            End Get
+            Set
+                Me("sampleArrayCount") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property exportArrayCount() As String
+            Get
+                Return CType(Me("exportArrayCount"),String)
+            End Get
+            Set
+                Me("exportArrayCount") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property sampleUnits() As String
+            Get
+                Return CType(Me("sampleUnits"),String)
+            End Get
+            Set
+                Me("sampleUnits") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
