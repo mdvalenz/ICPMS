@@ -593,7 +593,7 @@ Public Class Form1
 
                                     'change format of rlt and rmdl columns to text
                                     ExcelApp.Columns(4).EntireColumn.NumberFormat = "@"
-                                    'ExcelApp.Columns(5).EntireColumn.NumberFormat = "@"
+                                    'ExcelApp.Columns(5).EntireColumn.NumberFormat = "@" ************************
 
                                 End If
 
