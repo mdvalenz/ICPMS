@@ -180,31 +180,31 @@ Public Class Form4
         For rowNum = 0 To CInt(My.Settings.exportArrayCount)
             If exportArray(1, rowNum) <> "" Then
 
-                '*****************************************************************************************
-                'MDLs********************************************************
-                If callSampleSettingsForm.wetRadioButton.Checked = True Then
-                    If callSampleSettingsForm.diluteRadioButton.Checked = True Then
-                        If callSampleSettingsForm.juiceCheckBox.Checked = True Then
+                'MDLs
+                Dim mdlType As String = Nothing
+                If My.Settings.wetCheck = True Then
+                    If My.Settings.diluteCheck = True Then
+                        If My.Settings.juiceCheck = True Then
                             mdlType = "wj"
                         Else
                             mdlType = "wd"
                         End If
                     Else
-                        If callSampleSettingsForm.juiceCheckBox.Checked = True Then
+                        If My.Settings.juiceCheck = True Then
                             mdlType = "wj"
                         Else
                             mdlType = "wm"
                         End If
                     End If
                 Else
-                    If callSampleSettingsForm.diluteRadioButton.Checked = True Then
-                        If callSampleSettingsForm.juiceCheckBox.Checked = True Then
+                    If My.Settings.diluteCheck = True Then
+                        If My.Settings.juiceCheck = True Then
                             mdlType = "dj"
                         Else
                             mdlType = "dd"
                         End If
                     Else
-                        If callSampleSettingsForm.juiceCheckBox.Checked = True Then
+                        If My.Settings.juiceCheck = True Then
                             mdlType = "dj"
                         Else
                             mdlType = "dm"
@@ -213,357 +213,208 @@ Public Class Form4
                 End If
 
                 'Units
-                If callSampleSettingsForm.ppbRadioButton.Checked = True Then metalUnits = "ppb" Else metalUnits = "ppm"
-                cellValue = ExcelApp.Cells(rowNumber, 2).Value
+                Dim metalUnits As String = Nothing
+                If My.Settings.ppbCheck = True Then metalUnits = "ppb" Else metalUnits = "ppm"
 
-                Do While cellValue = "" And rowNumber < lastRow + 1
-                    leadCount = 0
-                    rowNumber = rowNumber + 1
-                    cellValue = ExcelApp.Cells(rowNumber, 2).Value
-                Loop
+                'Results
+                Dim metalName As String = Nothing
+                Dim metalTest As Double = Nothing
+                Dim metalResult As String = Nothing
 
-                Do While cellValue <> "" And rowNumber < lastRow + 1
+                metalName = exportArray(2, rowNum)
+                metalTest = exportArray(3, rowNum)
 
-                    Dim metalTest As Double = ExcelWorkbook.Range("G" & rowNumber).value
+                Dim finalMDL As Double = Nothing
+                Dim reportedMDL As String = Nothing
 
-                    If metalTest <> 0.0 Then
+                'Get Metal mdl
+                Select Case metalName
+                    Case "Ag"
+                        If mdlType = "wm" Then finalMDL = Form3.wmAgTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmAgTextBox.Text
+                    Case "Al"
+                        If mdlType = "wm" Then finalMDL = Form3.wmAlTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmAlTextBox.Text
+                    Case "As"
+                        If mdlType = "wm" Then finalMDL = Form3.wmAsTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmAsTextBox.Text
+                        If mdlType = "wj" Then finalMDL = Form3.wjAsTextBox.Text
+                    Case "B"
+                        If mdlType = "wm" Then finalMDL = Form3.wmBTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmBTextBox.Text
+                    Case "Ba"
+                        If mdlType = "wm" Then finalMDL = Form3.wmBaTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmBaTextBox.Text
+                    Case "Be"
+                        If mdlType = "wm" Then finalMDL = Form3.wmBeTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmBeTextBox.Text
+                    Case "Cd"
+                        If mdlType = "wm" Then finalMDL = Form3.wmCdTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmCdTextBox.Text
+                        If mdlType = "wj" Then finalMDL = Form3.wjCdTextBox.Text
+                    Case "Co"
+                        If mdlType = "wm" Then finalMDL = Form3.wmCoTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmCoTextBox.Text
+                    Case "Cr"
+                        If mdlType = "wm" Then finalMDL = Form3.wmCrTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmCrTextBox.Text
+                        If mdlType = "wj" Then finalMDL = Form3.wjCrTextBox.Text
+                    Case "Cu"
+                        If mdlType = "wm" Then finalMDL = Form3.wmCuTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmCuTextBox.Text
+                        If mdlType = "wj" Then finalMDL = Form3.wjCuTextBox.Text
+                    Case "Mn"
+                        If mdlType = "wm" Then finalMDL = Form3.wmMnTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmMnTextBox.Text
+                    Case "Mo"
+                        If mdlType = "wm" Then finalMDL = Form3.wmMoTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmMoTextBox.Text
+                    Case "Ni"
+                        If mdlType = "wm" Then finalMDL = Form3.wmNiTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmNiTextBox.Text
+                    Case "P"
+                        If mdlType = "wm" Then finalMDL = Form3.wmPTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmPTextBox.Text
+                    Case "Pb"
+                        If mdlType = "wd" Then finalMDL = Form3.wdPbTextBox.Text
+                        If mdlType = "dd" Then finalMDL = Form3.ddPbTextBox.Text
+                        If mdlType = "wm" Then finalMDL = Form3.wmPbTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmPbTextBox.Text
+                        If mdlType = "wj" Then finalMDL = Form3.wjPbTextBox.Text
+                    Case "Pd"
+                        If mdlType = "wm" Then finalMDL = Form3.wmPdTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmPdTextBox.Text
+                    Case "Sb"
+                        If mdlType = "wm" Then finalMDL = Form3.wmSbTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmSbTextBox.Text
+                    Case "Se"
+                        If mdlType = "wm" Then finalMDL = Form3.wmSeTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmSeTextBox.Text
+                        If mdlType = "wj" Then finalMDL = Form3.wjSeTextBox.Text
+                    Case "Sn"
+                        If mdlType = "wd" Then finalMDL = Form3.wdSnTextBox.Text
+                        If mdlType = "dd" Then finalMDL = Form3.ddSnTextBox.Text
+                        If mdlType = "wm" Then finalMDL = Form3.wmSnTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmSnTextBox.Text
+                    Case "Ti"
+                        If mdlType = "wm" Then finalMDL = Form3.wmTiTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmTiTextBox.Text
+                    Case "Tl"
+                        If mdlType = "wm" Then finalMDL = Form3.wmTlTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmTlTextBox.Text
+                    Case "V"
+                        If mdlType = "wm" Then finalMDL = Form3.wmVTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmVTextBox.Text
+                    Case "Zn"
+                        If mdlType = "wm" Then finalMDL = Form3.wmZnTextBox.Text
+                        If mdlType = "dm" Then finalMDL = Form3.dmZnTextBox.Text
+                End Select
 
-                        metalName = ExcelWorkbook.Range("B" & rowNumber).Value
-                        metalMass = ExcelWorkbook.Range("C" & rowNumber).Value
-                        My.Settings.metalName = metalName
-                        Dim finalMDL As Double = Nothing
-                        Dim reportedMDL As String = Nothing
+                'Conversion if units is ppm
+                If metalUnits = "ppm" Then
+                    metalTest = (metalTest / 1000)
+                    finalMDL = (finalMDL / 1000)
+                End If
 
-                        'Get Metal Result
-                        Select Case metalName
-                            Case "Ag"
-                                If metalMass = My.Settings.AgMass Then
-                                    analysisCode = "SILVER-ICP-MS"
-                                    metalAnalyte = "Silver"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmAgTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmAgTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Al"
-                                If metalMass = My.Settings.AlMass Then
-                                    analysisCode = "ALUMINUM-ICP-MS"
-                                    metalAnalyte = "Aluminum"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmAlTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmAlTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "As"
-                                If metalMass = My.Settings.AsMass Then
-                                    analysisCode = "ARSENIC-ICP-MS"
-                                    metalAnalyte = "Arsenic"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmAsTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmAsTextBox.Text
-                                    If mdlType = "wj" Then finalMDL = Form3.wjAsTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "B"
-                                If metalMass = My.Settings.BMass Then
-                                    analysisCode = "BORON-ICP-MS"
-                                    metalAnalyte = "Boron"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmBTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmBTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Ba"
-                                If metalMass = My.Settings.BaMass Then
-                                    analysisCode = "BARIUM-ICP-MS"
-                                    metalAnalyte = "Barium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmBaTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmBaTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Be"
-                                If metalMass = My.Settings.BeMass Then
-                                    analysisCode = "BERYLLIUM-ICP-MS"
-                                    metalAnalyte = "Beryllium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmBeTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmBeTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Cd"
-                                If metalMass = My.Settings.CdMass Then
-                                    analysisCode = "CADMIUM-ICP-MS"
-                                    metalAnalyte = "Cadmium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmCdTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmCdTextBox.Text
-                                    If mdlType = "wj" Then finalMDL = Form3.wjCdTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Co"
-                                If metalMass = My.Settings.CoMass Then
-                                    analysisCode = "COBALT-ICP-MS"
-                                    metalAnalyte = "Cobalt"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmCoTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmCoTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Cr"
-                                If metalMass = My.Settings.CrMass Then
-                                    analysisCode = "CHROMIUM-ICP-MS"
-                                    metalAnalyte = "Chromium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmCrTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmCrTextBox.Text
-                                    If mdlType = "wj" Then finalMDL = Form3.wjCrTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Cu"
-                                If metalMass = My.Settings.CuMass Then
-                                    analysisCode = "COPPER-ICP-MS"
-                                    metalAnalyte = "Copper"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmCuTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmCuTextBox.Text
-                                    If mdlType = "wj" Then finalMDL = Form3.wjCuTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Mn"
-                                If metalMass = My.Settings.MnMass Then
-                                    analysisCode = "MANGANESE-ICP-MS"
-                                    metalAnalyte = "Manganese"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmMnTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmMnTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Mo"
-                                If metalMass = My.Settings.MoMass Then
-                                    analysisCode = "MOLYBDENUM-ICP-MS"
-                                    metalAnalyte = "Molybdenum"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmMoTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmMoTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Ni"
-                                If metalMass = My.Settings.NiMass Then
-                                    analysisCode = "NICKEL-ICP-MS"
-                                    metalAnalyte = "Nickel"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmNiTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmNiTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "P"
-                                If metalMass = My.Settings.PMass Then
-                                    analysisCode = "PHOSPHOR-ICP-MS"
-                                    metalAnalyte = "Phosphorus"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmPTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmPTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Pb"
-                                If metalMass = My.Settings.PbMass Then
-                                    If My.Settings.leadConsumer = True Then
-                                        analysisCode = "LEAD_CONSUM"
-                                        metalAnalyte = "Lead"
-                                    Else
-                                        analysisCode = "LEAD-ICP-MS"
-                                        metalAnalyte = "Lead"
-                                    End If
-                                    If mdlType = "wd" Then finalMDL = Form3.wdPbTextBox.Text
-                                    If mdlType = "dd" Then finalMDL = Form3.ddPbTextBox.Text
-                                    If mdlType = "wm" Then finalMDL = Form3.wmPbTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmPbTextBox.Text
-                                    If mdlType = "wj" Then finalMDL = Form3.wjPbTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Pd"
-                                If metalMass = My.Settings.PdMass Then
-                                    analysisCode = "PALLADIUM-ICP-MS"
-                                    metalAnalyte = "Palladium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmPdTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmPdTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Sb"
-                                If metalMass = My.Settings.SbMass Then
-                                    analysisCode = "ANTIMONY-ICP-MS"
-                                    metalAnalyte = "Antimony"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmSbTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmSbTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Se"
-                                If metalMass = My.Settings.SeMass Then
-                                    analysisCode = "SELENIUM-ICP-MS"
-                                    metalAnalyte = "Selenium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmSeTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmSeTextBox.Text
-                                    If mdlType = "wj" Then finalMDL = Form3.wjSeTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Sn"
-                                If metalMass = My.Settings.SnMass Then
-                                    analysisCode = "TIN-ICP-MS"
-                                    metalAnalyte = "Tin"
-                                    If mdlType = "wd" Then finalMDL = Form3.wdSnTextBox.Text
-                                    If mdlType = "dd" Then finalMDL = Form3.ddSnTextBox.Text
-                                    If mdlType = "wm" Then finalMDL = Form3.wmSnTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmSnTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Ti"
-                                If metalMass = My.Settings.TiMass Then
-                                    analysisCode = "TITANIUM-ICP-MS"
-                                    metalAnalyte = "Titanium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmTiTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmTiTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Tl"
-                                If metalMass = My.Settings.TlMass Then
-                                    analysisCode = "THALLIUM-ICP-MS"
-                                    metalAnalyte = "Thallium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmTlTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmTlTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "V"
-                                If metalMass = My.Settings.VMass Then
-                                    analysisCode = "VANADIUM-ICP-MS"
-                                    metalAnalyte = "Vanadium"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmVTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmVTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case "Zn"
-                                If metalMass = My.Settings.ZnMass Then
-                                    analysisCode = "ZINC-ICP-MS"
-                                    metalAnalyte = "Zinc"
-                                    If mdlType = "wm" Then finalMDL = Form3.wmZnTextBox.Text
-                                    If mdlType = "dm" Then finalMDL = Form3.dmZnTextBox.Text
-                                Else
-                                    GoTo nextLine
-                                End If
-                            Case Else
-                                GoTo nextLine
-                        End Select
+                'Dim textResult As String = 0
+                Dim roundResult As Decimal = Nothing
+                Dim testRound As Integer = metalTest
+                Dim N As Integer = CStr(testRound).Length
+                Dim sigFig, sigFigMax As Integer
 
-                        'Conversion if units is ppm
-                        If metalUnits = "ppm" Then
-                            metalTest = (metalTest / 1000)
-                            finalMDL = (finalMDL / 1000)
-                        End If
+                'set sigfigs
+                sigFig = N
 
-                        'Dim textResult As String = 0
-                        Dim roundResult As Decimal = Nothing
-                        Dim testRound As Integer = metalTest
-                        Dim N As Integer = CStr(testRound).Length
-                        Dim sigFig, sigFigMax As Integer
+                If My.Settings.setSigFigs = "3" Then
+                    sigFigMax = 3
+                Else
+                    sigFigMax = 2
+                End If
 
-                        'set sigfigs
-                        sigFig = N
+                roundResult = Math.Round(metalTest / 10 ^ sigFig, sigFigMax) * 10 ^ sigFig
 
-                        If My.Settings.setSigFigs = "3" Then
-                            sigFigMax = 3
-                        Else
-                            sigFigMax = 2
-                        End If
+                If roundResult < finalMDL Then
+                    metalResult = "Not Detected"
+                    'textResult = 1
+                Else
 
-                        roundResult = Math.Round(metalTest / 10 ^ sigFig, sigFigMax) * 10 ^ sigFig
-
-                        If roundResult < finalMDL Then
-                            metalResult = "Not Detected"
-                            'textResult = 1
-                        Else
-
-                            If roundResult < 1000000 Then
-                                metalResult = CStr(FormatNumber(roundResult, "000000"))
-                            End If
-
-                            If roundResult < 100000 Then
-                                metalResult = CStr(FormatNumber(roundResult, "00000"))
-                            End If
-
-                            If roundResult < 10000 Then
-                                metalResult = CStr(FormatNumber(roundResult, "0000"))
-                            End If
-
-                            If roundResult < 1000 Then
-                                metalResult = CStr(FormatNumber(roundResult, "000"))
-                            End If
-
-                            If roundResult < 100 Then
-                                metalResult = CStr(FormatNumber(roundResult, "00.0"))
-                            End If
-
-                            If roundResult < 10 Then
-                                metalResult = CStr(FormatNumber(roundResult, "0.00"))
-                            End If
-
-                            If roundResult < 1 Then
-                                metalResult = CStr(FormatNumber(roundResult, "0.000"))
-                            End If
-
-                        End If
-
-                        If metalUnits = "ppm" Then
-
-                            If finalMDL < 1000000 Then
-                                reportedMDL = CStr(Format(finalMDL, "000000"))
-                            End If
-
-                            If finalMDL < 100000 Then
-                                reportedMDL = CStr(Format(finalMDL, "00000"))
-                            End If
-
-                            If finalMDL < 10000 Then
-                                reportedMDL = CStr(Format(finalMDL, "0000"))
-                            End If
-
-                            If finalMDL < 1000 Then
-                                reportedMDL = CStr(Format(finalMDL, "000"))
-                            End If
-
-                            If finalMDL < 100 Then
-                                reportedMDL = CStr(Format(finalMDL, "00.0"))
-                            End If
-
-                            If finalMDL < 10 Then
-                                reportedMDL = CStr(Format(finalMDL, "0.00"))
-                            End If
-
-                            If finalMDL < 1 Then
-                                reportedMDL = CStr(Format(finalMDL, "0.000"))
-                            End If
-
-                        Else
-                            reportedMDL = finalMDL
-                        End If
-
-                        '******************************************************************************************
-
-                        'Put revised data into export array
-
-
-
-
+                    If roundResult < 1000000 Then
+                        metalResult = CStr(FormatNumber(roundResult, "000000"))
                     End If
 
-            End If 
+                    If roundResult < 100000 Then
+                        metalResult = CStr(FormatNumber(roundResult, "00000"))
+                    End If
+
+                    If roundResult < 10000 Then
+                        metalResult = CStr(FormatNumber(roundResult, "0000"))
+                    End If
+
+                    If roundResult < 1000 Then
+                        metalResult = CStr(FormatNumber(roundResult, "000"))
+                    End If
+
+                    If roundResult < 100 Then
+                        metalResult = CStr(FormatNumber(roundResult, "00.0"))
+                    End If
+
+                    If roundResult < 10 Then
+                        metalResult = CStr(FormatNumber(roundResult, "0.00"))
+                    End If
+
+                    If roundResult < 1 Then
+                        metalResult = CStr(FormatNumber(roundResult, "0.000"))
+                    End If
+
+                End If
+
+                If metalUnits = "ppm" Then
+
+                    If finalMDL < 1000000 Then
+                        reportedMDL = CStr(Format(finalMDL, "000000"))
+                    End If
+
+                    If finalMDL < 100000 Then
+                        reportedMDL = CStr(Format(finalMDL, "00000"))
+                    End If
+
+                    If finalMDL < 10000 Then
+                        reportedMDL = CStr(Format(finalMDL, "0000"))
+                    End If
+
+                    If finalMDL < 1000 Then
+                        reportedMDL = CStr(Format(finalMDL, "000"))
+                    End If
+
+                    If finalMDL < 100 Then
+                        reportedMDL = CStr(Format(finalMDL, "00.0"))
+                    End If
+
+                    If finalMDL < 10 Then
+                        reportedMDL = CStr(Format(finalMDL, "0.00"))
+                    End If
+
+                    If finalMDL < 1 Then
+                        reportedMDL = CStr(Format(finalMDL, "0.000"))
+                    End If
+
+                Else
+                    reportedMDL = finalMDL
+                End If
+
+                'Put revised data into export array
+                exportArray(0, rowNum) = My.Settings.leadConsumer
+                'exportArray(1, rowNum) = sampleID
+                'exportArray(2, rowNum) = metalName
+                'exportArray(3, rowNum) = metalTest
+                exportArray(4, rowNum) = finalMDL
+                exportArray(5, rowNum) = metalUnits
+                exportArray(6, rowNum) = sigFigMax
+                exportArray(7, rowNum) = roundResult
+                exportArray(8, rowNum) = metalResult
+                exportArray(9, rowNum) = reportedMDL
+
+            End If
         Next
 
         'Update datagridview1
@@ -574,6 +425,7 @@ Public Class Form4
     Private Sub returnButton_Click(sender As Object, e As EventArgs) Handles returnButton.Click
 
         'Put datagridview1 data back into export array (or sample array if it's easier)**************************************
+        'Change lead analysis code if consumer lead
 
         My.Settings.skipSample = False
         Me.Close()
