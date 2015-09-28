@@ -424,8 +424,27 @@ Public Class Form4
 
     Private Sub returnButton_Click(sender As Object, e As EventArgs) Handles returnButton.Click
 
-        'Put datagridview1 data back into export array (or sample array if it's easier)**************************************
-        'Change lead analysis code if consumer lead
+        'Put datagridview1 data back into sample array
+        Dim j As Integer = 0
+        For j = 0 To CInt(My.Settings.sampleArrayCount)
+
+            If SampleArray(1, j) <> "" And SampleArray(1, j) = My.Settings.sampleID Then
+
+                If SampleArray(2, j) = DataGridView1.Rows(j).Cells(0).ToString Then
+                    'Transfer information from sample array to the export array
+                    If My.Settings.leadConsumer = True Then
+                        SampleArray(0, j) = True
+                    Else
+                        SampleArray(0, j) = False
+                    End If
+
+                    SampleArray(7, j) = DataGridView1.Rows(j).Cells(3).ToString
+                    SampleArray(8, j) = DataGridView1.Rows(j).Cells(4).ToString
+                    SampleArray(9, j) = DataGridView1.Rows(j).Cells(5).ToString
+
+                End If
+            End If
+        Next
 
         My.Settings.skipSample = False
         Me.Close()
