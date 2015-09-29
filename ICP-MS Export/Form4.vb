@@ -89,13 +89,13 @@ Public Class Form4
             Dim colC As DataColumn = New DataColumn("MDL (ppb)")
             colC.DataType = System.Type.GetType("System.String")
             dataTable1.Columns.Add(colC)
-            Dim colD As DataColumn = New DataColumn("Rounded Result " & My.Settings.sampleUnits)
+            Dim colD As DataColumn = New DataColumn("Rounded Result (" & My.Settings.sampleUnits & ")")
             colD.DataType = System.Type.GetType("System.String")
             dataTable1.Columns.Add(colD)
-            Dim colE As DataColumn = New DataColumn("Reported MDL " & My.Settings.sampleUnits)
+            Dim colE As DataColumn = New DataColumn("Reported MDL (" & My.Settings.sampleUnits & ")")
             colE.DataType = System.Type.GetType("System.String")
             dataTable1.Columns.Add(colE)
-            Dim colF As DataColumn = New DataColumn("Reported Result " & My.Settings.sampleUnits)
+            Dim colF As DataColumn = New DataColumn("Reported Result (" & My.Settings.sampleUnits & ")")
             colF.DataType = System.Type.GetType("System.String")
             dataTable1.Columns.Add(colF)
 
@@ -109,9 +109,9 @@ Public Class Form4
                     row.Item("Analyte") = exportArray(2, j)
                     row.Item("Concentration (ppb)") = exportArray(3, j)
                     row.Item("MDL (ppb)") = exportArray(5, j)
-                    row.Item("Rounded Result " & My.Settings.sampleUnits) = exportArray(7, j)
-                    row.Item("Reported MDL " & My.Settings.sampleUnits) = exportArray(9, j)
-                    row.Item("Reported Result " & My.Settings.sampleUnits) = exportArray(8, j)
+                    row.Item("Rounded Result (" & My.Settings.sampleUnits & ")") = exportArray(7, j)
+                    row.Item("Reported MDL (" & My.Settings.sampleUnits & ")") = exportArray(9, j)
+                    row.Item("Reported Result (" & My.Settings.sampleUnits & ")") = exportArray(8, j)
                     dataTable1.Rows.Add(row)
 
                 End If
@@ -342,69 +342,126 @@ Public Class Form4
 
                 If roundResult < finalMDL Then
                     metalResult = "Not Detected"
-                    'textResult = 1
                 Else
                     metalResult = roundResult
-                    'If roundResult < 1000000 Then
-                    '    metalResult = CStr(FormatNumber(roundResult, "000000"))
-                    'End If
+                    'If sigFigMax = 2 Then
+                    '    If roundResult < 1000000 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "000000"))
+                    '    End If
 
-                    'If roundResult < 100000 Then
-                    '    metalResult = CStr(FormatNumber(roundResult, "00000"))
-                    'End If
+                    '    If roundResult < 100000 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "00000"))
+                    '    End If
 
-                    'If roundResult < 10000 Then
-                    '    metalResult = CStr(FormatNumber(roundResult, "0000"))
-                    'End If
+                    '    If roundResult < 10000 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "0000"))
+                    '    End If
 
-                    'If roundResult < 1000 Then
-                    '    metalResult = CStr(FormatNumber(roundResult, "000"))
-                    'End If
+                    '    If roundResult < 1000 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "000"))
+                    '    End If
 
-                    'If roundResult < 100 Then
-                    '    metalResult = CStr(FormatNumber(roundResult, "00.0"))
-                    'End If
+                    '    If roundResult < 100 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "00"))
+                    '    End If
 
-                    'If roundResult < 10 Then
-                    '    metalResult = CStr(FormatNumber(roundResult, "0.00"))
-                    'End If
+                    '    If roundResult < 10 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "0.0"))
+                    '    End If
 
-                    'If roundResult < 1 Then
-                    '    metalResult = CStr(FormatNumber(roundResult, "0.000"))
-                    'End If
+                    '    If roundResult < 1 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "0.00"))
+                    '    End If
+                    'Else
+                    '    If roundResult < 1000000 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "000000"))
+                    '    End If
 
+                    '    If roundResult < 100000 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "00000"))
+                    '    End If
+
+                    '    If roundResult < 10000 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "0000"))
+                    '    End If
+
+                    '    If roundResult < 1000 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "000"))
+                    '    End If
+
+                    '    If roundResult < 100 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "00.0"))
+                    '    End If
+
+                    '    If roundResult < 10 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "0.00"))
+                    '    End If
+
+                    '    If roundResult < 1 Then
+                    '        metalResult = CStr(FormatNumber(roundResult, "0.000"))
+                    '    End If
+                    'End If
                 End If
 
                 If metalUnits = "ppm" Then
 
-                    If finalMDL < 1000000 Then
-                        reportedMDL = CStr(Format(finalMDL, "000000"))
-                    End If
+                    If sigFigMax = 2 Then
+                        If finalMDL < 1000000 Then
+                            reportedMDL = CStr(Format(finalMDL, "000000"))
+                        End If
 
-                    If finalMDL < 100000 Then
-                        reportedMDL = CStr(Format(finalMDL, "00000"))
-                    End If
+                        If finalMDL < 100000 Then
+                            reportedMDL = CStr(Format(finalMDL, "00000"))
+                        End If
 
-                    If finalMDL < 10000 Then
-                        reportedMDL = CStr(Format(finalMDL, "0000"))
-                    End If
+                        If finalMDL < 10000 Then
+                            reportedMDL = CStr(Format(finalMDL, "0000"))
+                        End If
 
-                    If finalMDL < 1000 Then
-                        reportedMDL = CStr(Format(finalMDL, "000"))
-                    End If
+                        If finalMDL < 1000 Then
+                            reportedMDL = CStr(Format(finalMDL, "000"))
+                        End If
 
-                    If finalMDL < 100 Then
-                        reportedMDL = CStr(Format(finalMDL, "00.0"))
-                    End If
+                        If finalMDL < 100 Then
+                            reportedMDL = CStr(Format(finalMDL, "00"))
+                        End If
 
-                    If finalMDL < 10 Then
-                        reportedMDL = CStr(Format(finalMDL, "0.00"))
-                    End If
+                        If finalMDL < 10 Then
+                            reportedMDL = CStr(Format(finalMDL, "0.0"))
+                        End If
 
-                    If finalMDL < 1 Then
-                        reportedMDL = CStr(Format(finalMDL, "0.000"))
-                    End If
+                        If finalMDL < 1 Then
+                            reportedMDL = CStr(Format(finalMDL, "0.00"))
+                        End If
+                    Else
+                        If finalMDL < 1000000 Then
+                            reportedMDL = CStr(Format(finalMDL, "000000"))
+                        End If
 
+                        If finalMDL < 100000 Then
+                            reportedMDL = CStr(Format(finalMDL, "00000"))
+                        End If
+
+                        If finalMDL < 10000 Then
+                            reportedMDL = CStr(Format(finalMDL, "0000"))
+                        End If
+
+                        If finalMDL < 1000 Then
+                            reportedMDL = CStr(Format(finalMDL, "000"))
+                        End If
+
+                        If finalMDL < 100 Then
+                            reportedMDL = CStr(Format(finalMDL, "00.0"))
+                        End If
+
+                        If finalMDL < 10 Then
+                            reportedMDL = CStr(Format(finalMDL, "0.00"))
+                        End If
+
+                        If finalMDL < 1 Then
+                            reportedMDL = CStr(Format(finalMDL, "0.000"))
+                        End If
+                    End If
                 Else
                     reportedMDL = finalMDL
                 End If
@@ -421,7 +478,13 @@ Public Class Form4
                 exportArray(8, rowNum) = metalResult
                 exportArray(9, rowNum) = reportedMDL
 
-            End If
+                Dim testMsg1 = exportArray(0, rowNum) 'for testing
+                Dim testMsg2 = exportArray(1, rowNum) 'for testing
+                Dim testMsg3 = exportArray(7, rowNum) 'for testing
+                Dim testMsg4 = exportArray(8, rowNum) 'for testing
+                Dim testMsg5 = exportArray(9, rowNum) 'for testing
+
+                End If
         Next
 
         'Update datagridview1
@@ -434,10 +497,10 @@ Public Class Form4
         'Put datagridview1 data back into export array
         Dim j As Integer = 0
         For j = 0 To CInt(My.Settings.exportArrayCount)
-
             If exportArray(1, j) <> "" Then
+                'Dim testMsg = DataGridView1.Rows(j - 1).Cells(0).Value 'for testing
+                If exportArray(2, j) = DataGridView1.Rows(j - 1).Cells(0).Value Then
 
-                If exportArray(2, j) = DataGridView1.Rows(j).Cells(0).ToString Then
                     'Transfer information from sample array to the export array
                     If My.Settings.leadConsumer = True Then
                         exportArray(0, j) = True
@@ -445,9 +508,17 @@ Public Class Form4
                         exportArray(0, j) = False
                     End If
 
-                    exportArray(7, j) = DataGridView1.Rows(j).Cells(3).ToString
-                    exportArray(9, j) = DataGridView1.Rows(j).Cells(4).ToString
-                    exportArray(8, j) = DataGridView1.Rows(j).Cells(5).ToString
+                    Dim testMsg1 = DataGridView1.Rows(j - 1).Cells(3).Value 'for testing
+                    Dim testMsg2 = DataGridView1.Rows(j - 1).Cells(4).Value 'for testing
+                    Dim testMsg3 = DataGridView1.Rows(j - 1).Cells(5).Value 'for testing
+
+                    exportArray(7, j) = DataGridView1.Rows(j - 1).Cells(3).Value
+                    exportArray(9, j) = DataGridView1.Rows(j - 1).Cells(4).Value
+                    exportArray(8, j) = DataGridView1.Rows(j - 1).Cells(5).Value
+
+                    'Dim msg As String = Nothing
+                    'msg = msg & exportArray(0, j) & ", " & exportArray(7, j) & ", " & exportArray(9, j) & ", " & exportArray(8, j) & vbNewLine
+                    'MsgBox("Export Values: " & vbNewLine & msg) 'for testing
 
                 End If
             End If
@@ -465,16 +536,42 @@ Public Class Form4
 
         'Update Sample Array with new Export Array data
         Dim j As Integer = 0
-        For j = 0 To CInt(My.Settings.sampleArrayCount)
+        For j = 0 To CInt(My.Settings.exportArrayCount)
 
-            If SampleArray(1, j) <> "" And SampleArray(1, j) = My.Settings.sampleID Then
+            If exportArray(1, j) <> "" Then
+                Dim sampleJ As Integer = 0
+                For sampleJ = 0 To CInt(My.Settings.sampleArrayCount)
+                    If SampleArray(1, sampleJ) <> "" And SampleArray(1, sampleJ) = exportArray(1, j) Then
+                        If SampleArray(2, sampleJ) = exportArray(2, j) Then
 
-                'Transfer information from export array to the sample array
-                SampleArray(0, j) = exportArray(0, j)
-                SampleArray(1, j) = exportArray(1, j)
-                SampleArray(7, j) = exportArray(7, j)
-                SampleArray(8, j) = exportArray(8, j)
-                SampleArray(9, j) = exportArray(9, j)
+                            'Transfer information from export array to the sample array
+                            Dim testMsg1 = exportArray(0, j) 'for testing
+                            Dim testMsg2 = exportArray(1, j) 'for testing
+                            Dim testMsg3 = exportArray(7, j) 'for testing
+                            Dim testMsg4 = exportArray(8, j) 'for testing
+                            Dim testMsg5 = exportArray(9, j) 'for testing
+
+                            SampleArray(0, sampleJ) = exportArray(0, j)
+                            SampleArray(1, sampleJ) = exportArray(1, j)
+                            SampleArray(7, sampleJ) = exportArray(7, j)
+                            SampleArray(8, sampleJ) = exportArray(8, j)
+                            SampleArray(9, sampleJ) = exportArray(9, j)
+
+                            Dim testMsg6 = SampleArray(0, j) 'for testing
+                            Dim testMsg7 = SampleArray(1, j) 'for testing
+                            Dim testMsg8 = SampleArray(7, j) 'for testing
+                            Dim testMsg9 = SampleArray(8, j) 'for testing
+                            Dim testMsg10 = SampleArray(9, j) 'for testing
+
+                            Exit For
+
+                        End If
+                    End If
+                Next
+
+                'Dim msg As String = Nothing
+                'msg = msg & SampleArray(0, j) & ", " & SampleArray(1, j) & ", " & SampleArray(7, j) & ", " & SampleArray(9, j) & ", " & SampleArray(8, j) & vbNewLine
+                'MsgBox("Sample Values: " & vbNewLine & msg) 'for testing
 
             End If
         Next
@@ -492,9 +589,7 @@ Public Class Form4
         'Clear Export Array
         Dim j As Integer = 0
         For j = 0 To CInt(My.Settings.exportArrayCount)
-
             exportArray(1, j) = ""
-
         Next
 
         'Update Sample Array

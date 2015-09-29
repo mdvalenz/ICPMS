@@ -156,7 +156,7 @@ Partial Class Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(547, 197)
+        Me.ClientSize = New System.Drawing.Size(539, 197)
         Me.Controls.Add(Me.progressBarLabel)
         Me.Controls.Add(Me.ProgressBar1)
         Me.Controls.Add(Me.Label1)
@@ -168,6 +168,9 @@ Partial Class Form1
         Me.Controls.Add(Me.MenuStrip1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MenuStrip1
+        Me.MaximizeBox = False
+        Me.MaximumSize = New System.Drawing.Size(555, 235)
+        Me.MinimumSize = New System.Drawing.Size(555, 235)
         Me.Name = "Form1"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "ICP-MS Results Import"

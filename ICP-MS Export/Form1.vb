@@ -335,15 +335,15 @@ Public Class Form1
                                     End If
 
                                     If roundResult < 100 Then
-                                        metalResult = CStr(FormatNumber(roundResult, "00.0"))
+                                        metalResult = CStr(FormatNumber(roundResult, "00"))
                                     End If
 
                                     If roundResult < 10 Then
-                                        metalResult = CStr(FormatNumber(roundResult, "0.00"))
+                                        metalResult = CStr(FormatNumber(roundResult, "0.0"))
                                     End If
 
                                     If roundResult < 1 Then
-                                        metalResult = CStr(FormatNumber(roundResult, "0.000"))
+                                        metalResult = CStr(FormatNumber(roundResult, "0.00"))
                                     End If
 
                                 End If
@@ -447,6 +447,7 @@ duplicateContinue:
                 'Open Form 4 for one sample
                 If SampleArray(1, rowNum) <> SampleArray(1, rowNum + 1) Then
                     My.Settings.sampleID = exportArray(1, exportArrayCount)
+
                     'Go to Form 4 and show results and allow changes
                     callSampleSettingsForm.ShowDialog(Me)
 
@@ -495,9 +496,10 @@ duplicateContinue:
                     exportArrayCount = 0
                     My.Settings.exportArrayCount = exportArrayCount
                     ReDim exportArray(9, exportArrayCount)
-                End If
 
+                End If
             End If
+nextSample:
         Next
 
         'Work through revised sample array and add to temp sheet
