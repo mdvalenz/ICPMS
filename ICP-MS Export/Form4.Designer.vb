@@ -233,7 +233,7 @@ Partial Class Form4
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExitProgramToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(1062, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(992, 24)
         Me.MenuStrip1.TabIndex = 0
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -321,7 +321,7 @@ Partial Class Form4
         Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridView1.Location = New System.Drawing.Point(350, 12)
         Me.DataGridView1.Name = "DataGridView1"
-        Me.DataGridView1.Size = New System.Drawing.Size(700, 339)
+        Me.DataGridView1.Size = New System.Drawing.Size(630, 339)
         Me.DataGridView1.TabIndex = 55
         '
         'endDateTimePicker
@@ -365,7 +365,7 @@ Partial Class Form4
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1062, 362)
+        Me.ClientSize = New System.Drawing.Size(992, 362)
         Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.consumerLeadCheckBox)
         Me.Controls.Add(Me.GroupBox4)

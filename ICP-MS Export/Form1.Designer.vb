@@ -31,9 +31,11 @@ Partial Class Form1
         Me.Label1 = New System.Windows.Forms.Label()
         Me.analystTextBox = New System.Windows.Forms.TextBox()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
+        Me.SelectMassesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SelectMassesToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ChangeDefaultMDLsToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SelectMassesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ProgressBar1 = New System.Windows.Forms.ProgressBar()
+        Me.progressBarLabel = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -112,6 +114,13 @@ Partial Class Form1
         Me.MenuStrip1.Text = "MenuStrip1"
         Me.MenuStrip1.Visible = False
         '
+        'SelectMassesToolStripMenuItem
+        '
+        Me.SelectMassesToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SelectMassesToolStripMenuItem1, Me.ChangeDefaultMDLsToolStripMenuItem1})
+        Me.SelectMassesToolStripMenuItem.Name = "SelectMassesToolStripMenuItem"
+        Me.SelectMassesToolStripMenuItem.Size = New System.Drawing.Size(61, 20)
+        Me.SelectMassesToolStripMenuItem.Text = "Settings"
+        '
         'SelectMassesToolStripMenuItem1
         '
         Me.SelectMassesToolStripMenuItem1.Name = "SelectMassesToolStripMenuItem1"
@@ -124,18 +133,32 @@ Partial Class Form1
         Me.ChangeDefaultMDLsToolStripMenuItem1.Size = New System.Drawing.Size(189, 22)
         Me.ChangeDefaultMDLsToolStripMenuItem1.Text = "Change Default MDLs"
         '
-        'SelectMassesToolStripMenuItem
+        'ProgressBar1
         '
-        Me.SelectMassesToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SelectMassesToolStripMenuItem1, Me.ChangeDefaultMDLsToolStripMenuItem1})
-        Me.SelectMassesToolStripMenuItem.Name = "SelectMassesToolStripMenuItem"
-        Me.SelectMassesToolStripMenuItem.Size = New System.Drawing.Size(61, 20)
-        Me.SelectMassesToolStripMenuItem.Text = "Settings"
+        Me.ProgressBar1.Location = New System.Drawing.Point(22, 162)
+        Me.ProgressBar1.Name = "ProgressBar1"
+        Me.ProgressBar1.Size = New System.Drawing.Size(419, 23)
+        Me.ProgressBar1.TabIndex = 8
+        Me.ProgressBar1.Visible = False
+        '
+        'progressBarLabel
+        '
+        Me.progressBarLabel.AutoSize = True
+        Me.progressBarLabel.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.progressBarLabel.Location = New System.Drawing.Point(18, 140)
+        Me.progressBarLabel.Name = "progressBarLabel"
+        Me.progressBarLabel.Size = New System.Drawing.Size(52, 19)
+        Me.progressBarLabel.TabIndex = 9
+        Me.progressBarLabel.Text = "Label2"
+        Me.progressBarLabel.Visible = False
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(547, 156)
+        Me.ClientSize = New System.Drawing.Size(547, 197)
+        Me.Controls.Add(Me.progressBarLabel)
+        Me.Controls.Add(Me.ProgressBar1)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.analystTextBox)
         Me.Controls.Add(Me.headingLabel)
@@ -165,5 +188,7 @@ Partial Class Form1
     Friend WithEvents SelectMassesToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents SelectMassesToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ChangeDefaultMDLsToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ProgressBar1 As System.Windows.Forms.ProgressBar
+    Friend WithEvents progressBarLabel As System.Windows.Forms.Label
 
 End Class

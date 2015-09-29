@@ -73,8 +73,9 @@ Public Class Form4
     Private Sub displayArray()
 
         'Clear datagridview1
-        DataGridView1.Rows.Clear()
-        DataGridView1.Columns.Clear()
+        DataGridView1.DataSource = Nothing
+
+        'DataGridView1.Rows.Clear()
 
         Dim dataTable1 As DataTable
         dataTable1 = New DataTable("Sample Array")
@@ -91,10 +92,10 @@ Public Class Form4
             Dim colD As DataColumn = New DataColumn("Rounded Result " & My.Settings.sampleUnits)
             colD.DataType = System.Type.GetType("System.String")
             dataTable1.Columns.Add(colD)
-            Dim colE As DataColumn = New DataColumn("Reported Result " & My.Settings.sampleUnits)
+            Dim colE As DataColumn = New DataColumn("Reported MDL " & My.Settings.sampleUnits)
             colE.DataType = System.Type.GetType("System.String")
             dataTable1.Columns.Add(colE)
-            Dim colF As DataColumn = New DataColumn("Reported MDL " & My.Settings.sampleUnits)
+            Dim colF As DataColumn = New DataColumn("Reported Result " & My.Settings.sampleUnits)
             colF.DataType = System.Type.GetType("System.String")
             dataTable1.Columns.Add(colF)
 
@@ -109,8 +110,8 @@ Public Class Form4
                     row.Item("Concentration (ppb)") = exportArray(3, j)
                     row.Item("MDL (ppb)") = exportArray(5, j)
                     row.Item("Rounded Result " & My.Settings.sampleUnits) = exportArray(7, j)
-                    row.Item("Reported Result " & My.Settings.sampleUnits) = exportArray(8, j)
                     row.Item("Reported MDL " & My.Settings.sampleUnits) = exportArray(9, j)
+                    row.Item("Reported Result " & My.Settings.sampleUnits) = exportArray(8, j)
                     dataTable1.Rows.Add(row)
 
                 End If
@@ -133,21 +134,27 @@ Public Class Form4
         'Set radio button values, checkbox values, and dates
         If wetRadioButton.Checked = True Then
             My.Settings.wetCheck = True
+            My.Settings.dryCheck = False
         Else
             My.Settings.dryCheck = True
+            My.Settings.wetCheck = False
         End If
 
         If microwaveRadioButton.Checked = True Then
             My.Settings.microwaveCheck = True
+            My.Settings.diluteCheck = False
         Else
             My.Settings.diluteCheck = True
+            My.Settings.microwaveCheck = False
         End If
 
         If ppbRadioButton.Checked = True Then
             My.Settings.ppbCheck = True
+            My.Settings.ppmCheck = False
             My.Settings.sampleUnits = "ppb"
         Else
             My.Settings.ppmCheck = True
+            My.Settings.ppbCheck = False
             My.Settings.sampleUnits = "ppm"
         End If
 
@@ -337,34 +344,34 @@ Public Class Form4
                     metalResult = "Not Detected"
                     'textResult = 1
                 Else
+                    metalResult = roundResult
+                    'If roundResult < 1000000 Then
+                    '    metalResult = CStr(FormatNumber(roundResult, "000000"))
+                    'End If
 
-                    If roundResult < 1000000 Then
-                        metalResult = CStr(FormatNumber(roundResult, "000000"))
-                    End If
+                    'If roundResult < 100000 Then
+                    '    metalResult = CStr(FormatNumber(roundResult, "00000"))
+                    'End If
 
-                    If roundResult < 100000 Then
-                        metalResult = CStr(FormatNumber(roundResult, "00000"))
-                    End If
+                    'If roundResult < 10000 Then
+                    '    metalResult = CStr(FormatNumber(roundResult, "0000"))
+                    'End If
 
-                    If roundResult < 10000 Then
-                        metalResult = CStr(FormatNumber(roundResult, "0000"))
-                    End If
+                    'If roundResult < 1000 Then
+                    '    metalResult = CStr(FormatNumber(roundResult, "000"))
+                    'End If
 
-                    If roundResult < 1000 Then
-                        metalResult = CStr(FormatNumber(roundResult, "000"))
-                    End If
+                    'If roundResult < 100 Then
+                    '    metalResult = CStr(FormatNumber(roundResult, "00.0"))
+                    'End If
 
-                    If roundResult < 100 Then
-                        metalResult = CStr(FormatNumber(roundResult, "00.0"))
-                    End If
+                    'If roundResult < 10 Then
+                    '    metalResult = CStr(FormatNumber(roundResult, "0.00"))
+                    'End If
 
-                    If roundResult < 10 Then
-                        metalResult = CStr(FormatNumber(roundResult, "0.00"))
-                    End If
-
-                    If roundResult < 1 Then
-                        metalResult = CStr(FormatNumber(roundResult, "0.000"))
-                    End If
+                    'If roundResult < 1 Then
+                    '    metalResult = CStr(FormatNumber(roundResult, "0.000"))
+                    'End If
 
                 End If
 
@@ -424,30 +431,54 @@ Public Class Form4
 
     Private Sub returnButton_Click(sender As Object, e As EventArgs) Handles returnButton.Click
 
-        'Put datagridview1 data back into sample array
+        'Put datagridview1 data back into export array
         Dim j As Integer = 0
-        For j = 0 To CInt(My.Settings.sampleArrayCount)
+        For j = 0 To CInt(My.Settings.exportArrayCount)
 
-            If SampleArray(1, j) <> "" And SampleArray(1, j) = My.Settings.sampleID Then
+            If exportArray(1, j) <> "" Then
 
-                If SampleArray(2, j) = DataGridView1.Rows(j).Cells(0).ToString Then
+                If exportArray(2, j) = DataGridView1.Rows(j).Cells(0).ToString Then
                     'Transfer information from sample array to the export array
                     If My.Settings.leadConsumer = True Then
-                        SampleArray(0, j) = True
+                        exportArray(0, j) = True
                     Else
-                        SampleArray(0, j) = False
+                        exportArray(0, j) = False
                     End If
 
-                    SampleArray(7, j) = DataGridView1.Rows(j).Cells(3).ToString
-                    SampleArray(8, j) = DataGridView1.Rows(j).Cells(4).ToString
-                    SampleArray(9, j) = DataGridView1.Rows(j).Cells(5).ToString
+                    exportArray(7, j) = DataGridView1.Rows(j).Cells(3).ToString
+                    exportArray(9, j) = DataGridView1.Rows(j).Cells(4).ToString
+                    exportArray(8, j) = DataGridView1.Rows(j).Cells(5).ToString
 
                 End If
             End If
         Next
 
         My.Settings.skipSample = False
+
+        'Update Sample Array
+        Call transferData()
+
         Me.Close()
+    End Sub
+
+    Private Sub transferData()
+
+        'Update Sample Array with new Export Array data
+        Dim j As Integer = 0
+        For j = 0 To CInt(My.Settings.sampleArrayCount)
+
+            If SampleArray(1, j) <> "" And SampleArray(1, j) = My.Settings.sampleID Then
+
+                'Transfer information from export array to the sample array
+                SampleArray(0, j) = exportArray(0, j)
+                SampleArray(1, j) = exportArray(1, j)
+                SampleArray(7, j) = exportArray(7, j)
+                SampleArray(8, j) = exportArray(8, j)
+                SampleArray(9, j) = exportArray(9, j)
+
+            End If
+        Next
+
     End Sub
 
     Private Sub ExitProgramToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExitProgramToolStripMenuItem.Click
@@ -457,6 +488,18 @@ Public Class Form4
 
     Private Sub SkipButton_Click(sender As Object, e As EventArgs) Handles skipButton.Click
         My.Settings.skipSample = True
+
+        'Clear Export Array
+        Dim j As Integer = 0
+        For j = 0 To CInt(My.Settings.exportArrayCount)
+
+            exportArray(1, j) = ""
+
+        Next
+
+        'Update Sample Array
+        Call transferData()
+
         Me.Close()
     End Sub
 

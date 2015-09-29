@@ -82,6 +82,16 @@ Public Class Form1
         Dim callSampleSettingsForm As New Form4
 
         For rowNumber = 1 To lastRow + 1
+
+            'Show progress bar
+            Me.Show()
+            progressBarLabel.Visible = True
+            progressBarLabel.Text = "Reading data from file"
+            ProgressBar1.Visible = True
+            ProgressBar1.Value = CInt((rowNumber / lastRow) * 100)
+            ProgressBar1.Refresh()
+            ProgressBar1.Update()
+
             If rowNumber <> 1 Then rowNumber = rowNumber - 2
             Dim cellValue As String = ExcelApp.Cells(rowNumber, 2).Value
             If cellValue = "" Then
@@ -400,12 +410,27 @@ duplicateContinue:
             rowNumber = rowNumber + 1
         Next
 
+        'Resetting progress bar
+        Me.Show()
+        progressBarLabel.Text = ""
+        progressBarLabel.Text = "Processing Samples"
+        ProgressBar1.Value = 0
+        ProgressBar1.Refresh()
+        ProgressBar1.Update()
+
         'Get one sample into the export array and go to form 4 for changes
         Dim exportArrayCount As Integer = 0
         For rowNum = 0 To CInt(My.Settings.sampleArrayCount)
+
+            ProgressBar1.Value = CInt((rowNum / CInt(My.Settings.sampleArrayCount)) * 100)
+            ProgressBar1.Refresh()
+            ProgressBar1.Update()
+
             If SampleArray(1, rowNum) <> "" Then
+
                 exportArrayCount = exportArrayCount + 1
                 My.Settings.exportArrayCount = exportArrayCount
+                ReDim Preserve exportArray(9, exportArrayCount)
 
                 'Transfer information from sample array to the export array
                 exportArray(0, exportArrayCount) = SampleArray(0, rowNum)
@@ -424,6 +449,49 @@ duplicateContinue:
                     My.Settings.sampleID = exportArray(1, exportArrayCount)
                     'Go to Form 4 and show results and allow changes
                     callSampleSettingsForm.ShowDialog(Me)
+
+                    If My.Settings.exportNow = True Then
+
+                        'Clear the rest of the Sample Array
+                        For rowNumExportNow = rowNum + 1 To CInt(My.Settings.sampleArrayCount)
+                            SampleArray(1, rowNumExportNow) = ""
+                        Next
+
+                        GoTo exportNow
+
+                    End If
+
+                    If My.Settings.exitProgram = True Then
+                        MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
+                        'Close Run File
+                        ExcelApp.Sheets(My.Settings.fileName).Activate()
+                        ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
+
+                        'Release Excel Objects and close Excel
+                        ExcelApp.Visible = True
+                        If Not ExcelWorkSheet Is Nothing Then
+                            Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkSheet)
+                            ExcelWorkSheet = Nothing
+                        End If
+
+                        If Not ExcelWorkbook Is Nothing Then
+                            Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkbook)
+                            ExcelWorkbook = Nothing
+                        End If
+
+                        If Not ExcelWorkBooks Is Nothing Then
+                            Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkBooks)
+                            ExcelWorkBooks = Nothing
+                        End If
+
+                        ExcelApp.Quit()
+                        If Not ExcelApp Is Nothing Then
+                            Runtime.InteropServices.Marshal.ReleaseComObject(ExcelApp)
+                            ExcelApp = Nothing
+                        End If
+                        GoTo endit
+                    End If
+
                     exportArrayCount = 0
                     My.Settings.exportArrayCount = exportArrayCount
                     ReDim exportArray(9, exportArrayCount)
