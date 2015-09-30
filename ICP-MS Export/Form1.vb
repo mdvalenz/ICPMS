@@ -61,7 +61,7 @@ Public Class Form1
 
         'Delete the temporary Worksheets, if they exist
         For Each ExcelWorkSheet In ExcelApp.Worksheets
-            If ExcelWorkSheet.Name = "temp" Then
+            If ExcelWorkSheet.Name = "temp" Or ExcelWorkSheet.Name = "temp2" Then
                 ExcelApp.DisplayAlerts = False
                 ExcelWorkSheet.Delete()
                 ExcelApp.DisplayAlerts = True
@@ -72,6 +72,10 @@ Public Class Form1
         Dim newWorksheet As Excel.Worksheet
         newWorksheet = CType(ExcelApp.Worksheets.Add(), Excel.Worksheet)
         newWorksheet.Name = "temp"
+
+        'Create temp2 worksheet
+        newWorksheet = CType(ExcelApp.Worksheets.Add(), Excel.Worksheet)
+        newWorksheet.Name = "temp2"
 
         ExcelApp.Sheets(My.Settings.fileName).Activate()
 
@@ -95,8 +99,7 @@ Public Class Form1
             If rowNumber <> 1 Then rowNumber = rowNumber - 2
             Dim cellValue As String = ExcelApp.Cells(rowNumber, 2).Value
             If cellValue = "" Then
-                sampleID = Microsoft.VisualBasic.Left(ExcelApp.Cells(rowNumber, 1).value, 7)
-                sampleID = UCase(sampleID)
+                sampleID = UCase(ExcelApp.Cells(rowNumber, 1).value)
 
                 Dim mdlType As String = Nothing
                 Dim metalUnits As String = Nothing
@@ -108,6 +111,7 @@ Public Class Form1
                     If IsNumeric(IDCheck) = True Then
 
                         If sampleID Like "ALT*" Then GoTo duplicateContinue
+                        If sampleID.Length > 7 Then GoTo duplicateContinue
 
                         Me.TopMost = True
                         Me.Focus()
@@ -296,8 +300,7 @@ Public Class Form1
                                         GoTo nextLine
                                 End Select
 
-                                'Dim textResult As String = 0
-                                Dim roundResult As Decimal = Nothing
+                                Dim roundResult As Double = Nothing
                                 Dim testRound As Integer = metalTest
                                 Dim N As Integer = CStr(testRound).Length
                                 Dim sigFig, sigFigMax As Integer
@@ -315,8 +318,8 @@ Public Class Form1
 
                                 If roundResult < finalMDL Then
                                     metalResult = "Not Detected"
-                                    'textResult = 1
                                 Else
+                                    metalResult = roundResult
 
                                     If roundResult < 1000000 Then
                                         metalResult = CStr(FormatNumber(roundResult, "000000"))
@@ -418,13 +421,22 @@ duplicateContinue:
         ProgressBar1.Refresh()
         ProgressBar1.Update()
 
-        'Get one sample into the export array and go to form 4 for changes
+        'Get one sample number into the export array and go to form 4 for changes
         Dim exportArrayCount As Integer = 0
+        Dim analyteCheck As String = Nothing
+
         For rowNum = 0 To CInt(My.Settings.sampleArrayCount)
 
             ProgressBar1.Value = CInt((rowNum / CInt(My.Settings.sampleArrayCount)) * 100)
             ProgressBar1.Refresh()
             ProgressBar1.Update()
+
+            'Check for duplicates and remove first entry if found
+            For rowNumDup = rowNum + 1 To CInt(My.Settings.sampleArrayCount)
+                If SampleArray(1, rowNum) = SampleArray(1, rowNumDup) And SampleArray(2, rowNum) = SampleArray(2, rowNumDup) Then
+                    SampleArray(1, rowNum) = ""
+                End If
+            Next
 
             If SampleArray(1, rowNum) <> "" Then
 
@@ -445,7 +457,7 @@ duplicateContinue:
                 exportArray(9, exportArrayCount) = SampleArray(9, rowNum)
 
                 'Open Form 4 for one sample
-                If SampleArray(1, rowNum) <> SampleArray(1, rowNum + 1) Then
+                If rowNum = CInt(My.Settings.sampleArrayCount) Then
                     My.Settings.sampleID = exportArray(1, exportArrayCount)
 
                     'Go to Form 4 and show results and allow changes
@@ -497,13 +509,69 @@ duplicateContinue:
                     My.Settings.exportArrayCount = exportArrayCount
                     ReDim exportArray(9, exportArrayCount)
 
+                Else
+
+                    If SampleArray(1, rowNum) <> SampleArray(1, rowNum + 1) Then
+                        My.Settings.sampleID = exportArray(1, exportArrayCount)
+
+                        'Go to Form 4 and show results and allow changes
+                        callSampleSettingsForm.ShowDialog(Me)
+
+                        If My.Settings.exportNow = True Then
+
+                            'Clear the rest of the Sample Array
+                            For rowNumExportNow = rowNum + 1 To CInt(My.Settings.sampleArrayCount)
+                                SampleArray(1, rowNumExportNow) = ""
+                            Next
+
+                            GoTo exportNow
+
+                        End If
+
+                        If My.Settings.exitProgram = True Then
+                            MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
+                            'Close Run File
+                            ExcelApp.Sheets(My.Settings.fileName).Activate()
+                            ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
+
+                            'Release Excel Objects and close Excel
+                            ExcelApp.Visible = True
+                            If Not ExcelWorkSheet Is Nothing Then
+                                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkSheet)
+                                ExcelWorkSheet = Nothing
+                            End If
+
+                            If Not ExcelWorkbook Is Nothing Then
+                                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkbook)
+                                ExcelWorkbook = Nothing
+                            End If
+
+                            If Not ExcelWorkBooks Is Nothing Then
+                                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelWorkBooks)
+                                ExcelWorkBooks = Nothing
+                            End If
+
+                            ExcelApp.Quit()
+                            If Not ExcelApp Is Nothing Then
+                                Runtime.InteropServices.Marshal.ReleaseComObject(ExcelApp)
+                                ExcelApp = Nothing
+                            End If
+                            GoTo endit
+                        End If
+
+                        exportArrayCount = 0
+                        My.Settings.exportArrayCount = exportArrayCount
+                        ReDim exportArray(9, exportArrayCount)
+
+                    End If
                 End If
             End If
 nextSample:
         Next
 
-        'Work through revised sample array and add to temp sheet
-        'Enter the data into the temp worksheet
+        'Work through revised sample array and add to text or numeric temp sheet
+
+        'Enter headers for temp sheet
         ExcelApp.Sheets("temp").Activate()
         ExcelApp.Range("A1").Select()
 
@@ -522,9 +590,38 @@ nextSample:
         ExcelApp.Columns(4).EntireColumn.NumberFormat = "@"
         'ExcelApp.Columns(5).EntireColumn.NumberFormat = "@"
 
+        'Enter headers for temp2 sheet
+        ExcelApp.Sheets("temp2").Activate()
+        ExcelApp.Range("A1").Select()
+
+        'Add Headers
+        ExcelApp.Range("A1").Value = "SIDN"
+        ExcelApp.Range("B1").Value = "ACODE"
+        ExcelApp.Range("C1").Value = "ANLNAME"
+        ExcelApp.Range("D1").Value = "RLT"
+        ExcelApp.Range("E1").Value = "RMDL"
+        ExcelApp.Range("F1").Value = "RUNT"
+        ExcelApp.Range("G1").Value = "ASTD"
+        ExcelApp.Range("H1").Value = "AEND"
+        ExcelApp.Range("I1").Value = "AANALYST"
+
+        'change format of rlt and rmdl columns to text
+        ExcelApp.Columns(4).EntireColumn.NumberFormat = "@"
+        'ExcelApp.Columns(5).EntireColumn.NumberFormat = "@"
+
+        'Work through array and enter results
         Dim nextRow As String = Nothing
         For rowNum = 0 To CInt(My.Settings.sampleArrayCount)
             If SampleArray(1, rowNum) <> "" Then
+
+                'Select correct temp sheet
+                If IsNumeric(SampleArray(8, rowNum)) Then
+                    ExcelApp.Sheets("temp").Activate()
+                    ExcelApp.Range("A1").Select()
+                Else
+                    ExcelApp.Sheets("temp2").Activate()
+                    ExcelApp.Range("A1").Select()
+                End If
 
                 'Select next row
                 nextRow = ExcelApp.Cells(ExcelApp.Rows.Count, 1).End(Excel.XlDirection.xlUp).Row + 1
@@ -661,7 +758,7 @@ exportNow:
             GoTo endit
         End If
 
-        'Copy worksheet
+        'Copy temp worksheet
         ExcelApp.Sheets("temp").Copy()
 
         'Check if someone else is running the macro
@@ -674,6 +771,53 @@ CheckLoop:
             LoopCount = LoopCount + 1
             If LoopCount < 3 Then
                 GoTo CheckLoop
+            Else
+                MsgBox("Error: Temp file already exists. Notify QA.", vbMsgBoxSetForeground)
+                GoTo endit
+            End If
+        End If
+
+        'Create temp CSV file and close
+        ExcelApp.ActiveWorkbook.SaveAs(Filename:="L:\eRecords\Chemistry\CSV_Temp\Temp_CSV", FileFormat:=Excel.XlFileFormat.xlCSV)
+        ExcelApp.ActiveWorkbook.Close(SaveChanges:=False)
+
+        'Import Temp CSV File
+        'Check for Windows version (32-bit or 64-bit)
+        ChDir("L:\eRecords\Chemistry\CSV_Temp\")
+
+        If FileFolderExists("C:\Program Files\PerkinElmer\LABWORKS64\POSTRESULTS6.exe") Then
+            Call Shell(Environ$("COMSPEC") & " /c L:\eRecords\Chemistry\CSV_Temp\MCexcel.bat", vbNormalFocus)
+        Else
+            If FileFolderExists("C:\Program Files (x86)\PerkinElmer\LABWORKS64\POSTRESULTS6.exe") Then
+                Call Shell(Environ$("COMSPEC") & " /c L:\eRecords\Chemistry\CSV_Temp\MCexcel_x64.bat", vbNormalFocus)
+            Else
+                MsgBox("Labworks not found, please contact QA.", vbMsgBoxSetForeground)
+                GoTo endit
+            End If
+        End If
+
+        'Delete the temp file in CSV Temp
+        MsgBox("Click OK after Labworks has imported the file.", vbMsgBoxSetForeground)
+        Kill("L:\eRecords\Chemistry\CSV_Temp\Temp_CSV.csv")
+
+
+
+        'Copy temp2 worksheet
+        ExcelApp.Sheets("temp2").Activate()
+        ExcelApp.Range("A1").Select()
+        ExcelApp.Sheets("temp2").Columns("A:I").AutoFit()
+        ExcelApp.Sheets("temp2").Copy()
+
+        'Check if someone else is running the macro
+        Dim LoopCount2 As String = 1
+
+CheckLoop2:
+        If Not Dir("L:\eRecords\Chemistry\CSV_Temp\Temp_CSV.csv", vbDirectory) = vbNullString Then
+            MsgBox("Someone else is running a macro, please wait..." & vbCrLf & "Attempt: " & LoopCount2 & " of 3", vbInformation + vbMsgBoxSetForeground)
+            System.Threading.Thread.Sleep(3000)
+            LoopCount2 = LoopCount2 + 1
+            If LoopCount2 < 3 Then
+                GoTo CheckLoop2
             Else
                 MsgBox("Error: Temp file already exists. Notify QA.", vbMsgBoxSetForeground)
                 GoTo endit

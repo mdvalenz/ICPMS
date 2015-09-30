@@ -53,6 +53,7 @@ Public Class Form4
         End If
 
         'Fill in datagridview1
+        Call recalculateValues()
         Call displayArray()
 
         'Detect changes to radio buttons and checkboxes
@@ -108,7 +109,7 @@ Public Class Form4
                     row = dataTable1.NewRow()
                     row.Item("Analyte") = exportArray(2, j)
                     row.Item("Concentration (ppb)") = exportArray(3, j)
-                    row.Item("MDL (ppb)") = exportArray(5, j)
+                    row.Item("MDL (ppb)") = exportArray(4, j)
                     row.Item("Rounded Result (" & My.Settings.sampleUnits & ")") = exportArray(7, j)
                     row.Item("Reported MDL (" & My.Settings.sampleUnits & ")") = exportArray(9, j)
                     row.Item("Reported Result (" & My.Settings.sampleUnits & ")") = exportArray(8, j)
@@ -324,7 +325,7 @@ Public Class Form4
                 End If
 
                 'Dim textResult As String = 0
-                Dim roundResult As Decimal = Nothing
+                Dim roundResult As Double = Nothing
                 Dim testRound As Integer = metalTest
                 Dim N As Integer = CStr(testRound).Length
                 Dim sigFig, sigFigMax As Integer
@@ -344,127 +345,9 @@ Public Class Form4
                     metalResult = "Not Detected"
                 Else
                     metalResult = roundResult
-                    'If sigFigMax = 2 Then
-                    '    If roundResult < 1000000 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "000000"))
-                    '    End If
-
-                    '    If roundResult < 100000 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "00000"))
-                    '    End If
-
-                    '    If roundResult < 10000 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "0000"))
-                    '    End If
-
-                    '    If roundResult < 1000 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "000"))
-                    '    End If
-
-                    '    If roundResult < 100 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "00"))
-                    '    End If
-
-                    '    If roundResult < 10 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "0.0"))
-                    '    End If
-
-                    '    If roundResult < 1 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "0.00"))
-                    '    End If
-                    'Else
-                    '    If roundResult < 1000000 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "000000"))
-                    '    End If
-
-                    '    If roundResult < 100000 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "00000"))
-                    '    End If
-
-                    '    If roundResult < 10000 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "0000"))
-                    '    End If
-
-                    '    If roundResult < 1000 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "000"))
-                    '    End If
-
-                    '    If roundResult < 100 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "00.0"))
-                    '    End If
-
-                    '    If roundResult < 10 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "0.00"))
-                    '    End If
-
-                    '    If roundResult < 1 Then
-                    '        metalResult = CStr(FormatNumber(roundResult, "0.000"))
-                    '    End If
-                    'End If
                 End If
 
-                If metalUnits = "ppm" Then
-
-                    If sigFigMax = 2 Then
-                        If finalMDL < 1000000 Then
-                            reportedMDL = CStr(Format(finalMDL, "000000"))
-                        End If
-
-                        If finalMDL < 100000 Then
-                            reportedMDL = CStr(Format(finalMDL, "00000"))
-                        End If
-
-                        If finalMDL < 10000 Then
-                            reportedMDL = CStr(Format(finalMDL, "0000"))
-                        End If
-
-                        If finalMDL < 1000 Then
-                            reportedMDL = CStr(Format(finalMDL, "000"))
-                        End If
-
-                        If finalMDL < 100 Then
-                            reportedMDL = CStr(Format(finalMDL, "00"))
-                        End If
-
-                        If finalMDL < 10 Then
-                            reportedMDL = CStr(Format(finalMDL, "0.0"))
-                        End If
-
-                        If finalMDL < 1 Then
-                            reportedMDL = CStr(Format(finalMDL, "0.00"))
-                        End If
-                    Else
-                        If finalMDL < 1000000 Then
-                            reportedMDL = CStr(Format(finalMDL, "000000"))
-                        End If
-
-                        If finalMDL < 100000 Then
-                            reportedMDL = CStr(Format(finalMDL, "00000"))
-                        End If
-
-                        If finalMDL < 10000 Then
-                            reportedMDL = CStr(Format(finalMDL, "0000"))
-                        End If
-
-                        If finalMDL < 1000 Then
-                            reportedMDL = CStr(Format(finalMDL, "000"))
-                        End If
-
-                        If finalMDL < 100 Then
-                            reportedMDL = CStr(Format(finalMDL, "00.0"))
-                        End If
-
-                        If finalMDL < 10 Then
-                            reportedMDL = CStr(Format(finalMDL, "0.00"))
-                        End If
-
-                        If finalMDL < 1 Then
-                            reportedMDL = CStr(Format(finalMDL, "0.000"))
-                        End If
-                    End If
-                Else
-                    reportedMDL = finalMDL
-                End If
+                reportedMDL = finalMDL
 
                 'Put revised data into export array
                 exportArray(0, rowNum) = My.Settings.leadConsumer
@@ -484,7 +367,7 @@ Public Class Form4
                 Dim testMsg4 = exportArray(8, rowNum) 'for testing
                 Dim testMsg5 = exportArray(9, rowNum) 'for testing
 
-                End If
+            End If
         Next
 
         'Update datagridview1
@@ -553,6 +436,7 @@ Public Class Form4
 
                             SampleArray(0, sampleJ) = exportArray(0, j)
                             SampleArray(1, sampleJ) = exportArray(1, j)
+                            SampleArray(5, sampleJ) = exportArray(5, j)
                             SampleArray(7, sampleJ) = exportArray(7, j)
                             SampleArray(8, sampleJ) = exportArray(8, j)
                             SampleArray(9, sampleJ) = exportArray(9, j)
