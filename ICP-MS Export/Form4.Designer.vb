@@ -248,7 +248,7 @@ Partial Class Form4
         'skipButton
         '
         Me.skipButton.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.skipButton.Location = New System.Drawing.Point(150, 321)
+        Me.skipButton.Location = New System.Drawing.Point(170, 321)
         Me.skipButton.Name = "skipButton"
         Me.skipButton.Size = New System.Drawing.Size(80, 30)
         Me.skipButton.TabIndex = 0
@@ -259,12 +259,12 @@ Partial Class Form4
         'exportButton
         '
         Me.exportButton.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.exportButton.Location = New System.Drawing.Point(35, 321)
+        Me.exportButton.Location = New System.Drawing.Point(12, 321)
         Me.exportButton.Name = "exportButton"
-        Me.exportButton.Size = New System.Drawing.Size(80, 30)
+        Me.exportButton.Size = New System.Drawing.Size(152, 30)
         Me.exportButton.TabIndex = 0
         Me.exportButton.TabStop = False
-        Me.exportButton.Text = "Export"
+        Me.exportButton.Text = "Skip and Export"
         Me.exportButton.UseVisualStyleBackColor = True
         '
         'GroupBox4

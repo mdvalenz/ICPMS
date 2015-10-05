@@ -408,6 +408,8 @@ Public Class Form4
         Next
 
         My.Settings.skipSample = False
+        My.Settings.startDate = startDateTimePicker.Value
+        My.Settings.endDate = endDateTimePicker.Value
 
         'Update Sample Array
         Call transferData()
@@ -490,8 +492,21 @@ Public Class Form4
     End Sub
 
     Private Sub exportButton_Click(sender As Object, e As EventArgs) Handles exportButton.Click
+
+        My.Settings.skipSample = True
+
+        'Clear Export Array
+        Dim j As Integer = 0
+        For j = 0 To CInt(My.Settings.exportArrayCount)
+            exportArray(1, j) = ""
+        Next
+
+        'Update Sample Array
+        Call transferData()
+
         My.Settings.exportNow = True
         Me.Close()
+
     End Sub
 
 End Class

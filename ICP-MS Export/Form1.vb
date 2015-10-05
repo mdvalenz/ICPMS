@@ -427,6 +427,10 @@ duplicateContinue:
 
         For rowNum = 0 To CInt(My.Settings.sampleArrayCount)
 
+            If My.Settings.exportNow = True Then
+                SampleArray(1, rowNum) = ""
+            End If
+
             ProgressBar1.Value = CInt((rowNum / CInt(My.Settings.sampleArrayCount)) * 100)
             ProgressBar1.Refresh()
             ProgressBar1.Update()
@@ -462,17 +466,6 @@ duplicateContinue:
 
                     'Go to Form 4 and show results and allow changes
                     callSampleSettingsForm.ShowDialog(Me)
-
-                    If My.Settings.exportNow = True Then
-
-                        'Clear the rest of the Sample Array
-                        For rowNumExportNow = rowNum + 1 To CInt(My.Settings.sampleArrayCount)
-                            SampleArray(1, rowNumExportNow) = ""
-                        Next
-
-                        GoTo exportNow
-
-                    End If
 
                     If My.Settings.exitProgram = True Then
                         MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
@@ -516,17 +509,6 @@ duplicateContinue:
 
                         'Go to Form 4 and show results and allow changes
                         callSampleSettingsForm.ShowDialog(Me)
-
-                        If My.Settings.exportNow = True Then
-
-                            'Clear the rest of the Sample Array
-                            For rowNumExportNow = rowNum + 1 To CInt(My.Settings.sampleArrayCount)
-                                SampleArray(1, rowNumExportNow) = ""
-                            Next
-
-                            GoTo exportNow
-
-                        End If
 
                         If My.Settings.exitProgram = True Then
                             MsgBox("The program has been canceled." & vbCrLf & "Nothing was exported to LabWorks.", vbMsgBoxSetForeground)
